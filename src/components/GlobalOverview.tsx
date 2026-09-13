@@ -1,156 +1,43 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { WorkspaceManagerAPI } from "../App";
-import { ChevronRight } from "./Icons";
 import CesiumViewer from "./CesiumViewer";
 import { useBusiness } from "../store/BusinessProvider";
+import MineInfoPanel from './MineInfoPanel';
+import { EquipmentInfoPanel } from './ScenePanels';
+import { MINE_LOCATIONS } from '../cesium/locations.js';
+function readSceneSelection():{mineId:string|null;equipmentId:string|null} {
+  try { const s=JSON.parse(sessionStorage.getItem('gotham-scene-selection')??'null');
+    return MINE_LOCATIONS.some(m=>m.id===s?.mineId)?s:{mineId:null,equipmentId:null};
+  } catch {return {mineId:null,equipmentId:null};}
+}
 export default function GlobalOverview({
   manager,
 }: {
   manager: WorkspaceManagerAPI;
 }) {
-  const [overviewOpen, setOverviewOpen] = useState(false),
-    [preset, setPreset] = useState(""),
-    [busy, setBusy] = useState(false),
-    [error, setError] = useState("");
-  const { data, refresh, mutate } = useBusiness();
+  const { data } = useBusiness();
+  const [mineId,setMineId]=useState<string|null>(()=>readSceneSelection().mineId);
+  const [equipmentId,setEquipmentId]=useState<string|null>(()=>readSceneSelection().equipmentId);
+  useEffect(()=>{try{sessionStorage.setItem('gotham-scene-selection',JSON.stringify({mineId,equipmentId}));}catch{}},[mineId,equipmentId]);
+  const [infoOpen,setInfoOpen]=useState(true);
+  const [cameraReset,setCameraReset]=useState(0);
+  const [focusRequest,setFocusRequest]=useState(0);
+  const selectEquipment=(id:string|null)=>{setEquipmentId(id);if(id)setFocusRequest(n=>n+1);};
+  const mine=MINE_LOCATIONS.find(m=>m.id===mineId);
+  const equipment=data.equipment.find(e=>e.id===equipmentId && e.mineId===mineId);
+  const selectMine=(id:string|null)=>{setMineId(id);setEquipmentId(null);setInfoOpen(true);setCameraReset(n=>n+1);};
   return (
-    <div className="workspace global-overview">
+    <div className={`workspace global-overview ${equipment?'has-equipment-info':''}`}>
       <div className="map-placeholder cesium-map-placeholder">
         <CesiumViewer
-          onOpenEquipment={(equipmentId) =>
-            manager.openWorkspace("mine", "玉龙矿区", {
-              equipmentId,
-              mineId: "yulong-mine",
-            })
-          }
+          mineId={mineId} equipmentId={equipmentId} reset={cameraReset} focusRequest={focusRequest}
+          onMine={selectMine} onEquipment={selectEquipment}
         />
       </div>
-      <section className={`overview-drawer ${overviewOpen ? "open" : ""}`}>
-        <button
-          className="overview-drawer-toggle"
-          type="button"
-          aria-expanded={overviewOpen}
-          onClick={() => setOverviewOpen(!overviewOpen)}
-        >
-          <span className="drawer-toggle-copy">
-            <span className="drawer-kicker">GLOBAL OVERVIEW</span>
-            <span className="drawer-coordinates">
-              35.2°N 102.5°E · ASIA-PACIFIC REGION
-            </span>
-          </span>
-          <span className="drawer-toggle-hint">
-            {overviewOpen ? "收起" : "展开概览"}
-          </span>
-          <ChevronRight size={15} className="drawer-chevron" />
-        </button>
-        {overviewOpen && (
-          <div className="overview-panels">
-            <div className="panel">
-              <h3>活跃矿区</h3>
-              <div className="panel-body">
-                {data.mines.map((m) => (
-                  <button
-                    className="object-row"
-                    key={m.id}
-                    onClick={() =>
-                      manager.openWorkspace("mine", m.name, {
-                        mineId: m.id,
-                        equipmentId: undefined,
-                      })
-                    }
-                  >
-                    <span className="row-status active" />
-                    <span className="row-name">{m.name}</span>
-                    <span className="row-meta">
-                      {data.equipment.filter((e) => e.mineId === m.id).length}{" "}
-                      台
-                    </span>
-                  </button>
-                ))}
-              </div>
-            </div>
-            <div className="panel">
-              <h3>快速操作</h3>
-              <div className="panel-body">
-                <button
-                  className="action-btn"
-                  onClick={() => manager.openWorkspace("report", "商业报告")}
-                >
-                  查看商业报告
-                </button>
-                <button
-                  className="action-btn"
-                  onClick={() =>
-                    manager.openWorkspace("archive", "资料库", {
-                      equipmentId: undefined,
-                    })
-                  }
-                >
-                  查看资料库
-                </button>
-                <button
-                  className="action-btn secondary"
-                  onClick={() => void refresh()}
-                >
-                  刷新数据
-                </button>
-              </div>
-            </div>
-            <div className="panel">
-              <h3>系统状态 · 模拟</h3>
-              <div className="panel-body">
-                {[
-                  ["演示设备", data.equipment.length],
-                  ["已归档报告", data.reports.length],
-                  ["商机", data.opportunities.length],
-                ].map(([k, v]) => (
-                  <div className="stat-row" key={k}>
-                    <span>{k}</span>
-                    <span className="stat-value">{v}</span>
-                  </div>
-                ))}
-                <select
-                  aria-label="重置模式"
-                  value={preset}
-                  onChange={(e) => setPreset(e.target.value)}
-                >
-                  <option value="">演示进度…</option>
-                  <option value="seeded">恢复预置报告</option>
-                  <option value="empty">空报告开局</option>
-                </select>
-                {preset && (
-                  <>
-                    <p>清除当前报告及模拟推送记录？</p>
-                    <button
-                      className="action-btn"
-                      disabled={busy}
-                      onClick={async () => {
-                        setBusy(true);
-                        try {
-                          await mutate("/demo/reset", {
-                            preset,
-                            confirm: true,
-                          });
-                          setPreset("");
-                          setError("");
-                        } catch (e) {
-                          setError((e as Error).message);
-                        } finally {
-                          setBusy(false);
-                        }
-                      }}
-                    >
-                      确认重置
-                    </button>
-                    <button onClick={() => setPreset("")}>取消</button>
-                  </>
-                )}
-                {error && <p role="alert">{error}</p>}
-              </div>
-            </div>
-          </div>
-        )}
-      </section>
+      <nav className="scene-navigation" aria-label="地图预设导航"><select aria-label="选择矿区" value={mineId??''} onChange={e=>selectMine(e.target.value||null)}><option value="">全国俯瞰</option>{MINE_LOCATIONS.map(m=><option key={m.id} value={m.id}>{m.name}</option>)}</select>{mine&&<><button onClick={()=>selectMine(null)}>返回全国</button><button onClick={()=>setCameraReset(n=>n+1)}>复位视角</button><button onClick={()=>setInfoOpen(v=>!v)}>矿区指标</button></>}</nav>
+      {mine&&infoOpen&&<MineInfoPanel mine={mine} equipment={data.equipment.filter(e=>e.mineId===mineId)} selectedEquipmentId={equipmentId} onEquipment={selectEquipment} onClose={()=>setInfoOpen(false)} onBack={()=>selectMine(null)}/>}
+      {equipment&&<EquipmentInfoPanel key={equipment.id} equipment={equipment} onClose={()=>setEquipmentId(null)} onDiagnose={()=>manager.openWorkspace('mine',mine?.name??'矿区',{equipmentId:equipment.id,mineId:equipment.mineId})}/>}
+
     </div>
   );
 }

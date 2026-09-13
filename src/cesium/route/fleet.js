@@ -2,7 +2,7 @@ import { buildDriveTurnTimeline } from './timeline.js';
 import { TRUCK_SPEED_METERS_PER_SECOND, TURN_DURATION_SECONDS } from './waypoints.js';
 
 export const ROUTE_VEHICLES = Object.freeze([
-  { id: 'truck-01', name: 'Truck-01', uri: '/models/mine_truck.glb', departureSeconds: 0, destination: 'P6' },
+  { id: 'truck-01', name: 'XDE240', uri: '/models/mine_truck.glb', departureSeconds: 0, destination: 'P6' },
   { id: 'excavator-01', name: 'XE215C · 挖掘机', uri: '/models/XE215C.glb', departureSeconds: 12, destination: 'P5' },
   { id: 'loader-01', name: 'XC958U · 铲车', uri: '/models/XC958U.glb', departureSeconds: 24, destination: 'P4' },
 ]);

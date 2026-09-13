@@ -10,8 +10,8 @@ export const customers = [
 export const equipment = [
   {
     id: "truck-01",
-    name: "Truck-01 矿卡",
-    model: "CAT797 示意模型",
+    name: "XDE240 矿卡",
+    model: "XDE240",
     type: "矿卡",
     status: "warning",
     modelUri: "/models/mine_truck.glb",

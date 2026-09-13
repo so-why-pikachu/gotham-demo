@@ -9,6 +9,16 @@ export interface Equipment {
   modelUri: string;
   hours: number;
 }
+export interface MineMetricsSnapshot {
+  mineId: string;
+  range: 'current' | '24h' | '7d';
+  asOf: string;
+  mock: true;
+  connected: boolean;
+  period: {from:string;to:string};
+  groups: {title:string;items:[string,string|number|null,string][]}[];
+  series: {time:string;dust:number;workers:number}[];
+}
 export interface Report {
   id: string;
   version: number;

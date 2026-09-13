@@ -296,21 +296,10 @@ try {
   checks.push(
     "Metal archive retains scene and single navigation with four actual reports and responsive layout",
   );
-  await click('[aria-label="打开 Global Overview"]');
-  await click(".overview-drawer-toggle");
-  await evaluate(
-    "const s=document.querySelector('[aria-label=\"重置模式\"]');s.value='empty';s.dispatchEvent(new Event('change',{bubbles:true}))",
-  );
-  await evaluate(
-    "[...document.querySelectorAll('button')].find(b=>b.textContent==='确认重置').click()",
-  );
-  await until(
-    () =>
-      evaluate(
-        "document.querySelector('[aria-label=\"重置模式\"]').value===''",
-      ),
-    "reset confirmation",
-  );
+  await click('[aria-label="打开Global overview"]');
+  await fetch(origin + '/api/v1/demo/reset', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({preset:'empty',confirm:true})});
+  await send('Page.navigate',{url:origin});
+  await until(()=>evaluate('!!document.querySelector(".app-shell")'),'reload after isolated reset');
   await click('[aria-label="打开Reports"]');
   await ready();
   await until(
@@ -345,7 +334,7 @@ try {
   await until(
     () =>
       inReport(
-        "document.querySelector('#detail-title').textContent.includes('Truck-01')",
+        "document.querySelector('#detail-title').textContent.includes('XDE240')",
       ),
     "single report",
   );
@@ -377,12 +366,9 @@ try {
   checks.push(
     "Empty reset and first new report work; existing model explode/reassemble remains functional",
   );
-  await click('[aria-label="打开 Global Overview"]');
-  await click(".overview-drawer-toggle");
+  await click('[aria-label="打开Global overview"]');
   await send("Network.setBlockedURLs", { urls: [`${origin}/api/*`] });
-  await evaluate(
-    "[...document.querySelectorAll('button')].find(b=>b.textContent==='刷新数据').click()",
-  );
+  await send('Page.navigate',{url:origin});
   await until(
     () => evaluate("!!document.querySelector('.business-notice[role=alert]')"),
     "network error",
@@ -394,7 +380,7 @@ try {
     "network recovery",
   );
   checks.push(
-    "API failures show a local retry control and recover without clearing workspaces",
+    "API failures show a local retry control and recover after a failed initial load",
   );
   assert.deepEqual(exceptions, []);
   const failures = failedLocalRequests.filter(

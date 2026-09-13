@@ -14,7 +14,7 @@ export function addMineTruck(viewer, routeTimeline, vehicle = {}) {
 
   return viewer.entities.add({
     id: vehicle.id ?? 'truck-01',
-    name: vehicle.name ?? 'Truck-01',
+    name: vehicle.name ?? 'XDE240',
     // Waiting vehicles enter at departure instead of overlapping at P1.
     availability: vehicle.departureSeconds > 0
       ? new Cesium.TimeIntervalCollection([new Cesium.TimeInterval({

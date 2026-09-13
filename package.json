@@ -10,6 +10,8 @@
     "preview": "node server/index.mjs",
     "test:fleet": "node scripts/check-fleet.mjs",
     "test:reports": "node scripts/check-business.mjs",
+    "test:scene": "node scripts/check-scene-navigation.mjs",
+    "test:scene:browser": "node scripts/check-scene.mjs",
     "dev:web": "vite --host 127.0.0.1 --port 5180",
     "dev:api": "node server/index.mjs",
     "test": "node --test server/tests/*.test.mjs"

@@ -7,12 +7,14 @@ export const YULONG_MINE = {
   longitude: 97.729167,
   latitude: 31.408333,
   markerColor: 'red',
+  sceneRadius: 310,
 };
 
 // 新增点位复用玉龙矿区的 Entity、Point、Label 和距离显示配置。
 export const ADDITIONAL_MINES = [
   {
     id: 'haerwusu-mine',
+    sceneRadius: 2800,
     name: '哈尔乌素露天煤矿',
     region: '内蒙古',
     mineType: '大型露天煤矿',
@@ -22,6 +24,7 @@ export const ADDITIONAL_MINES = [
   },
   {
     id: 'antaibao-mine',
+    sceneRadius: 2200,
     name: '平朔安太堡露天煤矿',
     region: '山西',
     mineType: '大型露天煤矿',
@@ -31,6 +34,7 @@ export const ADDITIONAL_MINES = [
   },
   {
     id: 'zhujia-baobao-mine',
+    sceneRadius: 1600,
     name: '攀枝花朱家包包铁矿',
     region: '四川',
     mineType: '钒钛磁铁矿 / 铁矿',

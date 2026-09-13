@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+const flights=[];
+globalThis.Cesium={Cartesian3:{clone:p=>[...p],fromDegrees:(...args)=>args},Math:{toRadians:v=>v*Math.PI/180},ScreenSpaceEventType:{LEFT_DOUBLE_CLICK:2},BoundingSphere:class{constructor(center,radius){Object.assign(this,{center,radius})}},HeadingPitchRange:class{constructor(heading,pitch,range){Object.assign(this,{heading,pitch,range})}}};
+const {createSceneNavigation}=await import('../src/cesium/scene-navigation.js');
+let phase,removed;
+const viewer={scene:{screenSpaceCameraController:{},canvas:{clientWidth:1280}},screenSpaceEventHandler:{removeInputAction:t=>removed=t},camera:{frustum:{fovy:Math.PI/3},cancelFlight(){},flyTo:o=>flights.push(o),flyToBoundingSphere:(sphere,o)=>flights.push({...o,sphere})},isDestroyed:()=>false};
+const nav=createSceneNavigation(viewer,p=>phase=p);
+assert.equal(removed,2);assert.ok(Object.values(viewer.scene.screenSpaceCameraController).every(v=>v===false));
+nav.navigate({id:'yulong-mine'},4500);const stale=flights.at(-1);assert.equal(stale.sphere.center[2],4500);assert.ok(stale.offset.range>1000);
+nav.navigate(null);stale.complete();assert.equal(phase,'returning');flights.at(-1).complete();assert.equal(phase,'national');
+const position=[1,2,4500];nav.focusEquipment(position);const focus=flights.at(-1);position[0]=99;assert.deepEqual(focus.sphere.center,[1,2,4500]);assert.equal(viewer.trackedEntity,undefined);focus.complete();assert.equal(phase,'equipment');const count=flights.length;position[1]=88;assert.equal(flights.length,count);nav.focusEquipment(position);assert.deepEqual(flights.at(-1).sphere.center,[99,88,4500]);nav.navigate(null);flights.at(-2).complete();assert.equal(phase,'returning');
+nav.navigate({id:'antaibao-mine',longitude:112,latitude:39},1200);const pending=flights.at(-1);nav.destroy();pending.complete();assert.equal(phase,'entering');
+console.log('PASS: camera input lock, terrain-relative focus, stale flight cancellation and disposal');

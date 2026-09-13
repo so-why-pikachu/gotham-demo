@@ -1,3 +1,4 @@
+import { mineMetrics } from './seed/mine-metrics.mjs';
 import {
   mines,
   equipment,
@@ -26,6 +27,12 @@ export async function route(store, method, url, body = {}) {
   const state = store.read();
   if (method === "GET") {
     if (name === "health") return { status: "ready", schema: 1 };
+    if (name === "mines" && id && sub === 'metrics') {
+      if (!mines.some(m => m.id === id)) fail(404, '矿区不存在');
+      const range = q.get('range') ?? 'current';
+      if (!['current', '24h', '7d'].includes(range)) fail(400, '时间范围无效');
+      return mineMetrics(id, range);
+    }
     if (name === "mines") return list(mines);
     if (name === "customers") return list(state.customers);
     if (name === "overview") {
@@ -35,7 +42,7 @@ export async function route(store, method, url, body = {}) {
       return {
         equipment: es.length,
         mines: mines.length,
-        alerts: es.length,
+        alerts: es.flatMap(e => alerts(e.id)).length,
         opportunities: opportunities(state).filter((o) =>
           es.some((e) => e.id === o.equipmentId),
         ).length,

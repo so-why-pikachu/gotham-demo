@@ -34,7 +34,7 @@ export default function TabBar({ workspaces, activeId, onActivate, onClose }: Ta
               }}
             >
               <span className="tab-icon">{typeIcon[ws.type] ?? '◈'}</span>
-              <span className="tab-title">{ws.title}</span>
+              <span className="tab-title">{ws.type === 'global' ? '总览' : ws.title}</span>
               <span
                 className="tab-close"
                 onClick={(e) => {

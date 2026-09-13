@@ -25,14 +25,14 @@ import {
 } from './orientation-benchmarks.js';
 
 export async function initializeTruckRoute(viewer, onStatus = () => {}) {
-  onStatus('Truck-01 · 正在生成路线采样点…');
+  onStatus('XDE240 · 正在生成路线采样点…');
   const geometry = buildRouteGeometry(
     TRUCK_ROUTE_WAYPOINTS,
     ROUTE_SAMPLE_SPACING_METERS,
   );
 
   onStatus(
-    `Truck-01 · 正在采样 World Terrain（${geometry.samples.length} 个点）…`,
+    `XDE240 · 正在采样 World Terrain（${geometry.samples.length} 个点）…`,
   );
   const route = await sampleRouteTerrain(
     viewer,
@@ -84,7 +84,7 @@ export async function initializeTruckRoute(viewer, onStatus = () => {}) {
     })),
   };
   globalThis.__TRUCK_ROUTE_DEBUG__ = debugInfo;
-  console.info('Truck-01 route prepared', debugInfo);
+  console.info('XDE240 route prepared', debugInfo);
 
   const visualization = addRouteVisualization(
     viewer,
@@ -98,7 +98,7 @@ export async function initializeTruckRoute(viewer, onStatus = () => {}) {
   globalThis.__TRUCK_ROUTE_DEBUG__.fleet = fleet;
 
   onStatus(
-    `Truck-01 · ${TRUCK_SPEED_METERS_PER_SECOND} m/s · DRIVE/TURN 路线已开始`,
+    `XDE240 · ${TRUCK_SPEED_METERS_PER_SECOND} m/s · DRIVE/TURN 路线已开始`,
   );
 
   return {

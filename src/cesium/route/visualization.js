@@ -7,7 +7,7 @@ export function addRouteVisualization(viewer, route, showDebugMarkers = false) {
   entities.push(
     viewer.entities.add({
       id: 'truck-01-route',
-      name: 'Truck-01 路线',
+      name: 'XDE240 路线',
       polyline: {
         positions: routePositions,
         width: 3,
@@ -22,7 +22,7 @@ export function addRouteVisualization(viewer, route, showDebugMarkers = false) {
     entities.push(
       viewer.entities.add({
         id: `truck-01-${waypoint.id}`,
-        name: `Truck-01 ${waypoint.id}`,
+        name: `XDE240 ${waypoint.id}`,
         position: route.waypointPositions[index],
         point: {
           pixelSize: 8,

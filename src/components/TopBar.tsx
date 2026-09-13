@@ -12,10 +12,10 @@ interface TopBarProps {
 }
 
 const navigationItems = [
-  { type: 'global', title: 'Global Overview', label: '总览', icon: Globe2 },
+  { type: 'global', title: 'Global Overview', label: 'Global overview', icon: Globe2 },
   { type: 'mine', title: '玉龙矿区', label: 'Operations', icon: Activity },
-  { type: 'report', title: '商业报告', label: 'Reports', icon: BarChart3 },
   { type: 'archive', title: '资料库', label: 'Archive', icon: Layers3 },
+  { type: 'report', title: '商业报告', label: 'Reports', icon: BarChart3 },
 ] as const;
 
 export default function TopBar({
@@ -29,14 +29,12 @@ export default function TopBar({
   return (
     <header className="topbar">
       <div className="topbar-left">
-        <button
-          className="app-logo"
-          title="Global Overview"
-          aria-label="打开 Global Overview"
-          onClick={() => onOpenWorkspace('global', 'Global Overview')}
-        >
-          <span className="logo-mark" />
-        </button>
+        <div className="app-logo" role="img" aria-label="Gotham">
+          <svg width="22" height="26" viewBox="0 0 24 28" fill="none" stroke="currentColor" strokeWidth="2.8" aria-hidden="true">
+            <circle cx="12" cy="10" r="7.5" />
+            <path d="M3 21.5 12 25.5 21 21.5" strokeLinejoin="miter" />
+          </svg>
+        </div>
 
         <nav className="topbar-nav" aria-label="Workspace navigation">
           {navigationItems.map((item) => {
