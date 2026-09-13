@@ -1,0 +1,48 @@
+# Dependencies and generated builds
+node_modules/
+/dist/
+.vite/
+.vite-temp/
+.cache/
+*.tsbuildinfo
+
+# Local environment configuration (keep shareable templates)
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# Local demo progress and temporary storage writes
+/data/
+
+# Browser profiles and generated verification artifacts
+.browser-*/
+/coverage/
+/test-results/
+/playwright-report/
+/blob-report/
+/artifacts/
+/docs/business-verification/*.png
+/docs/report-migration/*.png
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+/tmp/
+/temp/
+
+# Local IDE and operating system files
+.idea/
+*.suo
+*.user
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Blender automatic backups (keep .blend sources and exported models)
+*.blend1
+*.blend2

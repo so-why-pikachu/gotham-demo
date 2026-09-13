@@ -1,0 +1,15 @@
+{
+  "checks": [
+    "Three fleet models map to equipment and evidence in existing Inspector",
+    "Review generates v2; archived v1 remains accessible; source link opens correct device",
+    "Simulated push persists locally and updates the report",
+    "Demand report is generated and links to exact reviewed diagnosis",
+    "Documents filter by equipment and show actual mock content",
+    "Report selection and overview mode restore after switching tabs",
+    "Metal archive retains scene and single navigation with four actual reports and responsive layout",
+    "Empty reset and first new report work; existing model explode/reassemble remains functional",
+    "API failures show a local retry control and recover without clearing workspaces"
+  ],
+  "exceptions": [],
+  "failedLocalRequests": []
+}

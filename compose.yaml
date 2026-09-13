@@ -1,0 +1,26 @@
+name: gotham-demo
+services:
+  gotham:
+    image: gotham-demo:local
+    build:
+      context: .
+      args:
+        VITE_CESIUM_ION_TOKEN: ${VITE_CESIUM_ION_TOKEN:?Set VITE_CESIUM_ION_TOKEN in .env.docker}
+    ports:
+      - "${GOTHAM_BIND_ADDRESS:-127.0.0.1}:${GOTHAM_PORT:-8080}:5182"
+    environment:
+      API_HOST: 0.0.0.0
+      API_PORT: "5182"
+      DEMO_STATE_FILE: /app/data/demo-state.json
+    volumes:
+      - gotham-data:/app/data
+    restart: unless-stopped
+    stop_grace_period: 30s
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:5182/api/v1/health',{signal:AbortSignal.timeout(3000)}).then(async r=>{if(!r.ok||(await r.json()).status!=='ready')process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      start_period: 10s
+      retries: 3
+volumes:
+  gotham-data:

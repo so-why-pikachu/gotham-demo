@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 72" fill="none">
+  <title>Archive Lab</title>
+  <g stroke="#78ddf7" stroke-width="3" stroke-linecap="square" stroke-linejoin="miter">
+    <path d="M32 4 57 18v36L32 68 7 54V18Z"/>
+    <path d="m7 18 25 14 25-14M7 30l25 14 25-14M7 42l25 14 25-14"/>
+    <path d="m20 20 12-7 12 7-12 7ZM7 54l13-7m37 7-13-7"/>
+  </g>
+</svg>

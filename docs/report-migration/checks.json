@@ -1,0 +1,32 @@
+{
+  "origin": "http://127.0.0.1:5179",
+  "checks": [
+    "Gotham commercial report tab loads archive with only the Gotham top navigation",
+    "Iframe receives keyboard navigation; cyclic rows and column memory work",
+    "Switching to existing library removes archive renderer; returning restores report selection",
+    "Detail and its active information tab restore on workspace return",
+    "Six-part model viewer loads local assets, explodes, reassembles and closes",
+    "Search remains available after standalone navigation removal",
+    "Navigation crop and container scaling fit 1280×800 without clipping controls or horizontal overflow",
+    "Closing and reopening report tab remounts one working archive frame"
+  ],
+  "reportExceptions": [],
+  "failedLocalRequests": [],
+  "existingFaviconFailures": [],
+  "otherExceptionCount": 0,
+  "finalScene": {
+    "ready": true,
+    "selected": {
+      "lane": 0,
+      "row": 8
+    },
+    "lift": 0.2766375171537679,
+    "detail": 0,
+    "angle": 0,
+    "clearance": -3.5934420020984392,
+    "canRotate": false,
+    "returning": 0,
+    "phase": "preview",
+    "instances": 288
+  }
+}

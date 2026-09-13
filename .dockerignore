@@ -1,0 +1,11 @@
+node_modules
+dist
+.git
+.browser-*
+.env
+.env.*
+data
+docs
+art
+artifacts
+*.log

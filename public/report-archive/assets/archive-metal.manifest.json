@@ -1,0 +1,56 @@
+{
+  "name": "archive-metal",
+  "version": 1,
+  "textures": [],
+  "dimensions": {
+    "width": 4.999999761581421,
+    "height": 3.700000047683716,
+    "depth": 0.4100000113248825
+  },
+  "coordinates": "GLB: X width, Y up, Z thickness; bottom centered origin",
+  "frontNormal": [
+    0,
+    0,
+    1
+  ],
+  "parts": [
+    "carrier",
+    "substrate",
+    "core",
+    "rails",
+    "cover",
+    "fasteners"
+  ],
+  "explodeOffsetsZ": {
+    "carrier": -0.65,
+    "substrate": -0.35,
+    "core": 0,
+    "rails": 0.35,
+    "cover": 0.85,
+    "fasteners": 1.1
+  },
+  "label": {
+    "center": [
+      -2.17,
+      2.07,
+      0.204
+    ],
+    "width": 0.31,
+    "height": 2.3,
+    "normal": [
+      0,
+      0,
+      1
+    ],
+    "suggestedTextRotationDegrees": 90
+  },
+  "materialRoles": [
+    "AM_BlueSteel",
+    "AM_InsetSteel",
+    "AM_MachinedEdge",
+    "AM_SilverPlate",
+    "AM_Gasket",
+    "AM_ArchiveCore"
+  ],
+  "integration": "Preserve GLB material values. Do not apply original transparent-card material overrides. Dynamic text is not baked into either GLB."
+}
