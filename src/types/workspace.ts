@@ -1,4 +1,4 @@
-export type WorkspaceType = 'global' | 'mine' | 'report' | 'archive';
+export type WorkspaceType = 'global' | 'mine' | 'report' | 'archive' | 'compose';
 
 export interface Workspace {
   id: string;

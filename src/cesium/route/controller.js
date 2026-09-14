@@ -16,6 +16,7 @@ import {
   TURN_DURATION_SECONDS,
   VEHICLE_GROUND_OFFSET_METERS,
   MODEL_HEADING_OFFSET,
+  MINE_ROUTES,
 } from './waypoints.js';
 import { addRouteVisualization } from './visualization.js';
 import {
@@ -26,19 +27,15 @@ import {
 
 export async function initializeTruckRoute(viewer, onStatus = () => {}) {
   onStatus('XDE240 · 正在生成路线采样点…');
-  const geometry = buildRouteGeometry(
-    TRUCK_ROUTE_WAYPOINTS,
-    ROUTE_SAMPLE_SPACING_METERS,
-  );
-
-  onStatus(
-    `XDE240 · 正在采样 World Terrain（${geometry.samples.length} 个点）…`,
-  );
-  const route = await sampleRouteTerrain(
-    viewer,
-    geometry,
-    VEHICLE_GROUND_OFFSET_METERS,
-  );
+  const routes = {};
+  for (const definition of MINE_ROUTES) {
+    onStatus(`${definition.name} · 正在采样地形…`);
+    routes[definition.id] = await sampleRouteTerrain(viewer,
+      buildRouteGeometry(definition.waypoints, ROUTE_SAMPLE_SPACING_METERS),
+      VEHICLE_GROUND_OFFSET_METERS);
+    if (viewer.isDestroyed()) return;
+  }
+  const route = routes.main;
   if (viewer.isDestroyed()) return;
 
   const timeline = buildDriveTurnTimeline(
@@ -47,7 +44,7 @@ export async function initializeTruckRoute(viewer, onStatus = () => {}) {
     TURN_DURATION_SECONDS,
   );
   configureViewerClock(viewer, timeline);
-  const fleet = buildFleetTimelines(route);
+  const fleet = buildFleetTimelines(routes);
   for (const vehicle of fleet) {
     vehicle.timeline.startTime = globalThis.Cesium.JulianDate.addSeconds(
       timeline.startTime, vehicle.departureSeconds, new globalThis.Cesium.JulianDate(),
@@ -86,11 +83,9 @@ export async function initializeTruckRoute(viewer, onStatus = () => {}) {
   globalThis.__TRUCK_ROUTE_DEBUG__ = debugInfo;
   console.info('XDE240 route prepared', debugInfo);
 
-  const visualization = addRouteVisualization(
-    viewer,
-    route,
-    SHOW_ROUTE_DEBUG_MARKERS,
-  );
+  const routeVisuals = MINE_ROUTES.map(definition => addRouteVisualization(
+    viewer, routes[definition.id], SHOW_ROUTE_DEBUG_MARKERS, definition.id, definition.name));
+  const visualization = {setShow(show) {routeVisuals.forEach(v => v.setShow(show));}};
   for (const vehicle of fleet) vehicle.entity = addMineTruck(viewer, vehicle.timeline, vehicle);
   const truckEntity = fleet[0].entity;
   globalThis.__TRUCK_ROUTE_DEBUG__.truckEntity = truckEntity;
@@ -103,6 +98,7 @@ export async function initializeTruckRoute(viewer, onStatus = () => {}) {
 
   return {
     route,
+    routes,
     timeline,
     truckEntity,
     fleet,

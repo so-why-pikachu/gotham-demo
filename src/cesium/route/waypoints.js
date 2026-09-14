@@ -9,6 +9,24 @@ export const TRUCK_ROUTE_WAYPOINTS = Object.freeze([
 ]);
 
 export const TRUCK_SPEED_METERS_PER_SECOND = 10;
+// Additional demo corridors, sampled against terrain just like the original route.
+export const MINE_ROUTES = Object.freeze([
+  { id: 'main', name: '主运输线', waypoints: TRUCK_ROUTE_WAYPOINTS },
+  { id: 'east', name: '东侧作业线', waypoints: [
+    {id:'E1',longitude:97.7403,latitude:31.4106},
+    {id:'E2',longitude:97.7400,latitude:31.4116},
+    {id:'E3',longitude:97.7395,latitude:31.4126},
+    {id:'E4',longitude:97.7390,latitude:31.4136},
+    {id:'E5',longitude:97.7382,latitude:31.4144},
+  ] },
+  { id: 'south', name: '南侧作业线', waypoints: [
+    {id:'S1',longitude:97.7391,latitude:31.4095},
+    {id:'S2',longitude:97.7378,latitude:31.4093},
+    {id:'S3',longitude:97.7365,latitude:31.4091},
+    {id:'S4',longitude:97.7352,latitude:31.4090},
+    {id:'S5',longitude:97.7339,latitude:31.4093},
+  ] },
+]);
 export const ROUTE_SAMPLE_SPACING_METERS = 8;
 export const TERRAIN_SMOOTHING_RADIUS_SAMPLES = 1;
 export const VEHICLE_GROUND_OFFSET_METERS = 0.8;

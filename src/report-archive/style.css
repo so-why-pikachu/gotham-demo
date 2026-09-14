@@ -11,7 +11,7 @@
   font-display: swap;
 }
 :root {
-  font-family: MiSans, Arial, sans-serif;
+  font-family: MiSans, sans-serif;
   color: #f1f5f9;
   background: #102030;
   font-synthesis: none;
@@ -22,6 +22,11 @@
 * {
   box-sizing: border-box;
 }
+*,
+*::before,
+*::after {
+  font-family: MiSans, sans-serif;
+}
 body {
   margin: 0;
   overflow: hidden;
@@ -30,6 +35,11 @@ button,
 a,
 input {
   font: inherit;
+}
+select,
+textarea,
+option {
+  font-family: inherit;
 }
 button {
   border: 0;
@@ -208,30 +218,24 @@ i {
   width: 1px;
   background: var(--line);
 }
-.manifesto {
+.archive-preview {
   position: absolute;
-  left: 54px;
-  top: 465px;
-  border: 1px solid #9abbc782;
-  padding: 19px 23px 24px;
-  width: 238px;
-  background: #12253515;
-  z-index: 2;
+  left: 60px;
+  top: 774px;
+  width: 540px;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  z-index: 3;
   color: #bcd3e9;
-  font-size: 12px;
+  font-size: 15px;
   line-height: 1.8;
-  letter-spacing: 1.5px;
+  letter-spacing: .5px;
+  pointer-events: none;
 }
-.manifesto i {
-  width: 17px;
-  height: 2px;
-  background: var(--cyan);
-  display: block;
-  margin-bottom: 14px;
-}
-.manifesto p + i {
-  margin-top: 24px;
-}
+#preview-code { flex-shrink: 0; white-space: nowrap; }
+#preview-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.preview-divider { color: var(--cyan); }
 .mission {
   position: absolute;
   right: 59px;
@@ -355,20 +359,6 @@ i {
   margin-top: 32px;
   padding: 0;
 }
-.circle-arrow {
-  border: 1px solid var(--cyan);
-  border-radius: 50%;
-  width: 52px;
-  height: 52px;
-  display: grid;
-  place-items: center;
-  color: var(--cyan);
-  background: #061b2c40;
-}
-.circle-arrow svg {
-  width: 27px;
-  height: 27px;
-}
 .access strong {
   font-size: 16px;
   letter-spacing: 1px;
@@ -377,10 +367,6 @@ i {
   margin-left: 5px;
   width: 29px;
   height: 29px;
-}
-.access:hover .circle-arrow {
-  background: #75dff724;
-  box-shadow: 0 0 30px #75dff71a;
 }
 .network {
   position: absolute;
@@ -606,17 +592,6 @@ footer p:last-child i {
     opacity: 1;
   }
 }
-#hover {
-  position: absolute;
-  z-index: 5;
-  pointer-events: none;
-  background: #101e2eee;
-  border: 1px solid #8bb6cf88;
-  padding: 9px 14px;
-  font-size: 12px;
-  letter-spacing: 1px;
-  color: #d7e8f6;
-}
 #loading {
   position: absolute;
   inset: 0;
@@ -753,10 +728,41 @@ footer p:last-child i {
   color: var(--cyan);
 }
 #detail-body {
+  scrollbar-width: thin;
+  scrollbar-color: #537c96 #142b3c;
+  scrollbar-gutter: stable;
   min-height: 290px;
   max-height: 350px;
   overflow: auto;
   padding-right: 16px;
+}
+#detail-body:hover,
+#detail-body:focus-within {
+  scrollbar-color: #75b8ce #142b3c;
+}
+/* Keep the native scroll interaction, with a narrow archive-blue rail. */
+@supports selector(::-webkit-scrollbar) {
+  #detail-body { scrollbar-width: auto; scrollbar-color: auto; }
+  #detail-body::-webkit-scrollbar { width: 7px; height: 7px; }
+  #detail-body::-webkit-scrollbar-track {
+    background: #142b3c;
+    border-left: 1px solid #87afcb20;
+  }
+  #detail-body::-webkit-scrollbar-thumb {
+    background: #537c96;
+    border: 2px solid #142b3c;
+    border-radius: 0;
+    min-height: 36px;
+  }
+  #detail-body::-webkit-scrollbar-thumb:hover { background: #75b8ce; }
+  #detail-body::-webkit-scrollbar-thumb:active { background: var(--cyan); }
+  #detail-body::-webkit-scrollbar-button { display: none; width: 0; height: 0; }
+  #detail-body::-webkit-scrollbar-corner { background: #142b3c; }
+}
+@media (forced-colors: active) {
+  #detail-body { scrollbar-color: auto; }
+  #detail-body::-webkit-scrollbar-thumb { background: ButtonText; border-color: Canvas; }
+  #detail-body::-webkit-scrollbar-track { background: Canvas; }
 }
 #detail-body h3 {
   font-size: 21px;
@@ -835,7 +841,7 @@ footer p:last-child i {
   margin-right: 25px;
 }
 [data-mode="detail"] .hero,
-[data-mode="detail"] .manifesto,
+[data-mode="detail"] .archive-preview,
 [data-mode="detail"] .mission,
 [data-mode="detail"] .file-callout,
 [data-mode="detail"] .network,

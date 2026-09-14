@@ -5,11 +5,16 @@ export const ROUTE_VEHICLES = Object.freeze([
   { id: 'truck-01', name: 'XDE240', uri: '/models/mine_truck.glb', departureSeconds: 0, destination: 'P6' },
   { id: 'excavator-01', name: 'XE215C · 挖掘机', uri: '/models/XE215C.glb', departureSeconds: 12, destination: 'P5' },
   { id: 'loader-01', name: 'XC958U · 铲车', uri: '/models/XC958U.glb', departureSeconds: 24, destination: 'P4' },
+  { id: 'truck-02', name: 'XDE240 · 02', uri: '/models/mine_truck.glb', routeId: 'east', departureSeconds: 6, destination: 'E5' },
+  { id: 'excavator-02', name: 'XE215C · 02', uri: '/models/XE215C.glb', routeId: 'east', departureSeconds: 18, destination: 'E4' },
+  { id: 'loader-02', name: 'XC958U · 02', uri: '/models/XC958U.glb', routeId: 'south', departureSeconds: 30, destination: 'S5' },
 ]);
 
 // Reuse the same terrain samples so all vehicles follow exactly the same road.
-export function buildFleetTimelines(route) {
+export function buildFleetTimelines(routes) {
   return ROUTE_VEHICLES.map(vehicle => {
+    const route = routes[vehicle.routeId ?? 'main'];
+    if (!route) throw new Error(`Missing route for ${vehicle.id}`);
     const index = route.waypoints.findIndex(point => point.id === vehicle.destination);
     if (index < 1) throw new Error(`Invalid fleet destination: ${vehicle.destination}`);
     const distance = route.waypointDistances[index];

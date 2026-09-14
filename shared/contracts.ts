@@ -1,4 +1,20 @@
+export interface EquipmentAlert {
+  id: string;
+  equipmentId: string;
+  title: string;
+  severity: string;
+  mock: boolean;
+  visualization?: { part: string; scope: 'region' | 'part'; component: string };
+}
 export interface Equipment {
+  serialNumber?: string;
+  commissionedAt?: string;
+  task?: string;
+  shift?: string;
+  shiftHours?: number;
+  lastServiceAt?: string;
+  nextServiceAt?: string;
+  asOf?: string;
   id: string;
   name: string;
   model: string;
@@ -20,6 +36,11 @@ export interface MineMetricsSnapshot {
   series: {time:string;dust:number;workers:number}[];
 }
 export interface Report {
+  collection?: 'diagnosis'|'reviews'|'demand'|'follow-up'|'archive';
+  sections?: {title:string;body:string}[];
+  costItems?: {label:string;amountCents:number}[];
+  evidenceSnapshot?: {id:string;title:string;body:string}[];
+  parentReportId?: string;
   id: string;
   version: number;
   type: "diagnosis" | "business";
@@ -37,12 +58,16 @@ export interface Report {
   amountCents: number;
   sourceId?: string;
   sourceVersion?: number;
+  documentIds?: string[];
   units?: number;
   delivery?: string;
   finance?: boolean;
   sent?: boolean;
 }
 export interface Document {
+  mineId?: string;
+  source?: string;
+  summary?: string;
   id: string;
   equipmentId: string;
   title: string;
@@ -60,7 +85,7 @@ export interface Snapshot {
   reports: Report[];
   documents: Document[];
   customers: { id: string; name: string; category: string }[];
-  mines: { id: string; name: string }[];
+  mines: { id: string; name: string;region?:string;mineral?:string;operator?:string;connected?:boolean }[];
   opportunities: {
     id: string;
     equipmentId: string;

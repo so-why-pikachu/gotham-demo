@@ -1,4 +1,5 @@
 import { mineMetrics } from './seed/mine-metrics.mjs';
+import { isDemandReport } from '../shared/report-actions.mjs';
 import {
   mines,
   equipment,
@@ -69,12 +70,14 @@ export async function route(store, method, url, body = {}) {
           ),
         );
       if (sub === "telemetry") {
+        if(q.has('field')&&!telemetry(id).some(t=>t.field===q.get('field')))fail(400,'指标不存在');
         for (const key of ["from", "to"])
           if (q.has(key) && !Number.isFinite(Date.parse(q.get(key))))
             fail(400, "时间范围无效");
         return list(
           telemetry(id).filter(
             (t) =>
+              (!q.has('field')||t.field===q.get('field')) &&
               (!q.has("from") ||
                 Date.parse(t.time) >= Date.parse(q.get("from"))) &&
               (!q.has("to") || Date.parse(t.time) <= Date.parse(q.get("to"))),
@@ -100,7 +103,7 @@ export async function route(store, method, url, body = {}) {
         (d) =>
           (!q.has("equipmentId") || d.equipmentId === q.get("equipmentId")) &&
           (!q.has("category") || d.category === q.get("category")) &&
-          (!q.has("q") || (d.title + d.id).includes(q.get("q"))),
+          (!q.has("q") || (d.title + d.id + d.body + d.source).toLowerCase().includes(q.get("q").toLowerCase())),
       );
       if (!id) return list(ds);
       const d = documents.find((d) => d.id === id);
@@ -143,7 +146,7 @@ export async function route(store, method, url, body = {}) {
           fail(400, "仅支持 Markdown");
         return {
           download: `${r.id}-v${r.version}.md`,
-          text: `# ${r.title}\n\n${r.id} v${r.version}\n\n演示模拟数据 · 未实际发送\n\n${r.conclusion}\n\n${r.evidence.join("\n\n")}\n\n金额：¥${(r.amountCents / 100).toFixed(2)}\n来源：${r.sourceId ?? r.equipmentId} ${r.sourceVersion ?? ""}\n`,
+          text: `# ${r.title}\n\n${r.id} v${r.version}\n\n演示数据 · 未实际发送\n\n${r.conclusion}\n\n${(r.sections??[]).map(s=>`## ${s.title}\n${s.body}`).join('\n\n')}\n\n${r.evidence.join("\n\n")}\n\n${(r.costItems??[]).map(c=>`${c.label}：¥${(c.amountCents/100).toFixed(2)}`).join('\n')}\n\n金额：¥${(r.amountCents / 100).toFixed(2)}\n来源：${r.sourceId ?? r.equipmentId} ${r.sourceVersion ?? ""}\n`,
         };
       }
       if (!sub || sub === "versions") return r;
@@ -200,7 +203,9 @@ export async function route(store, method, url, body = {}) {
             r.id === id && r.version === body.version && r.type === "business",
         );
         if (!r) fail(404, "商业报告版本不存在");
+        if (!isDemandReport(r)) fail(409, '仅需求方案可推送，跟进报告无需重复推送');
         r.sent = true;
+        r.collection = 'follow-up';
         result = r;
       } else fail(404, "接口不存在");
       Object.defineProperty(s.requests, body.requestId, {

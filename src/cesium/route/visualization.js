@@ -1,13 +1,13 @@
 const Cesium = globalThis.Cesium;
 
-export function addRouteVisualization(viewer, route, showDebugMarkers = false) {
+export function addRouteVisualization(viewer, route, showDebugMarkers = false, routeId = 'main', routeName = '主运输线') {
   const entities = [];
   const routePositions = route.samples.map((sample) => sample.position);
 
   entities.push(
     viewer.entities.add({
-      id: 'truck-01-route',
-      name: 'XDE240 路线',
+      id: `${routeId}-route`,
+      name: routeName,
       polyline: {
         positions: routePositions,
         width: 3,
@@ -21,7 +21,7 @@ export function addRouteVisualization(viewer, route, showDebugMarkers = false) {
   route.waypoints.forEach((waypoint, index) => {
     entities.push(
       viewer.entities.add({
-        id: `truck-01-${waypoint.id}`,
+        id: `${routeId}-${waypoint.id}`,
         name: `XDE240 ${waypoint.id}`,
         position: route.waypointPositions[index],
         point: {

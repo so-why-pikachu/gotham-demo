@@ -7,7 +7,7 @@ export const YULONG_MINE = {
   longitude: 97.729167,
   latitude: 31.408333,
   markerColor: 'red',
-  sceneRadius: 310,
+  sceneRadius: 460,
 };
 
 // 新增点位复用玉龙矿区的 Entity、Point、Label 和距离显示配置。
@@ -49,12 +49,19 @@ export const MINE_LOCATIONS = [YULONG_MINE, ...ADDITIONAL_MINES];
 // 全国尺度：高度故意保持在百万米级，保证初始视角能覆盖中国。
 export const CHINA_VIEW = {
   longitude: 103.8,
-  latitude: 35.5,
-  height: 2_400_000,
+  latitude: 33.5,
+  height: 3_300_000,
   heading: 0,
   pitch: -90,
   roll: 0,
 };
+
+// Wide windows have a smaller vertical field of view; keep the southern mine in frame.
+export function getChinaView(viewer) {
+  const canvas = viewer.scene.canvas;
+  const aspect = (canvas.clientWidth || 1280) / (canvas.clientHeight || 900);
+  return { ...CHINA_VIEW, height: CHINA_VIEW.height * Math.max(1, aspect / 1.8) };
+}
 
 // 玉龙矿区局部尺度：20 km 位于任务要求的 10~30 km 范围内。
 export const YULONG_VIEW = {

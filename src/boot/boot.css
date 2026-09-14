@@ -1,0 +1,306 @@
+.datarocks-boot-stage .brand{
+  position: absolute;
+  left: 59px;
+  top: 112px;
+  z-index: 5;
+  line-height: 1;
+  user-select: none;
+}
+.datarocks-boot-stage .brand h1{
+  font-size: 48px;
+  letter-spacing: 0.1px;
+  line-height: 51px;
+  margin: 0;
+  font-weight: 750;
+}
+.datarocks-boot-stage .brand > div{
+  font-size: 20px;
+  line-height: 23px;
+  letter-spacing: -0.05px;
+}
+.datarocks-boot-stage .brand p{
+  margin: 0;
+  font-size: 38px;
+  line-height: 40px;
+  word-spacing: 10px;
+}
+.datarocks-boot-stage .brand p b{
+  font-weight: 750;
+}
+.datarocks-boot-stage .powered{
+  position: absolute;
+  right: 59px;
+  bottom: 108px;
+  font-size: 18px;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  line-height: 24px;
+}
+.datarocks-boot-stage .powered b{
+  font-weight: 750;
+}
+.datarocks-boot-stage .powered i{
+  height: 6px;
+  width: 25px;
+  background: #090a08;
+  display: inline-block;
+  margin-left: 11px;
+}
+.datarocks-boot-stage .boot-background{
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at 51% 48%,
+    #e7e7e1 0%,
+    #e3e1dc 76%,
+    #e4dfdb 100%
+  );
+  transition: none;
+  pointer-events: none;
+}
+
+.datarocks-boot-stage .boot{
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+}
+.datarocks-boot-stage .boot-logo{
+  position: absolute;
+  width: 296px;
+  height: 177px;
+  left: 518px;
+  top: 462px;
+  transition: none;
+  opacity: 0;
+}
+.datarocks-boot-stage .boot-logo svg{
+  width: 100%;
+  height: 100%;
+}
+.datarocks-boot-stage .auth-status{
+  position: absolute;
+  left: 931px;
+  top: 529px;
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  white-space: nowrap;
+  opacity: 0;
+}
+.datarocks-boot-stage .auth-status > span:first-child{
+  font-size: 14px;
+}
+.datarocks-boot-stage .auth-status i{
+  width: 3px;
+  height: 22px;
+  background: #282b26;
+  animation: blink 0.8s steps(1) infinite;
+}
+.datarocks-boot-stage .access-text{
+  position: absolute;
+  top: 532px;
+  left: 800px;
+  width: 420px;
+  text-align: left;
+  font-size: 18px;
+  opacity: 0;
+}
+.datarocks-boot-stage .scan{
+  position: absolute;
+  left: 410px;
+  top: -10px;
+  width: 1100px;
+  height: 1100px;
+  opacity: 0;
+  transform: scale(0.82);
+  transition:
+    transform 1.6s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.6s;
+}
+.datarocks-boot-stage .scan svg{
+  width: 100%;
+  height: 100%;
+}
+.datarocks-boot-stage .scan > span{
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 25px;
+}
+.datarocks-boot-stage .scan-track{
+  stroke: #f7f5f0;
+  stroke-width: 8;
+}
+.datarocks-boot-stage .scan-ring{
+  stroke: #aaa9a0;
+  stroke-width: 8;
+  transform-origin: center;
+  stroke-dasharray: 2400 900;
+}
+.datarocks-boot-stage .scan-nodes{
+  fill: #e7c69b;
+  filter: drop-shadow(0 0 15px #ddb788);
+  transform-origin: center;
+  animation: orbit 8s linear infinite;
+}
+.datarocks-boot-stage .welcome{
+  position: absolute;
+  top: 403px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  font-size: 55px;
+  font-weight: 700;
+  line-height: 1.05;
+  opacity: 0;
+  transform: translateY(14px);
+  transition:
+    opacity 0.7s,
+    transform 1s;
+}
+.datarocks-boot-stage .welcome strong{
+  display: inline-block;
+  background: #080a08;
+  color: #ece9e4;
+  padding: 4px 10px 6px;
+  font-size: 51px;
+  line-height: 1;
+}
+.datarocks-boot-stage .welcome-logo{
+  width: 203px;
+  height: 121px;
+  margin: 58px auto 0;
+}
+.datarocks-boot-stage .welcome-logo svg{
+  width: 100%;
+  height: 100%;
+}
+.datarocks-boot-stage .brand,
+.datarocks-boot-stage .powered{
+  transition: opacity 0.6s;
+}
+.datarocks-boot-stage .brand h1{
+  font-size: 50px;
+}
+.datarocks-boot-stage .brand p{
+  font-size: 40px;
+  word-spacing: 8px;
+}
+.datarocks-boot-stage .powered{
+  font-size: 19px;
+}
+
+.datarocks-boot-stage .brand h1{
+  transform: translateY(2px);
+}
+.datarocks-boot-stage .auth-status i{
+  display: none;
+}
+.datarocks-boot-stage .boot-white{
+  position: absolute;
+  inset: 0;
+  background: #fff;
+  opacity: 0;
+}
+.datarocks-boot-stage .scan{
+  inset: 0;
+  width: 1920px;
+  height: 1080px;
+  transform: none;
+  transition: none;
+}
+.datarocks-boot-stage .scan > span{
+  font-size: 22px;
+  white-space: nowrap;
+  padding-left: 0;
+}
+.datarocks-boot-stage .welcome{
+  left: 720px;
+  top: 403px;
+  width: 480px;
+  height: 340px;
+  transform-origin: 50% 44%;
+  transition: none;
+}
+.datarocks-boot-stage .welcome-heading{
+  position: relative;
+  z-index: 1;
+  line-height: 65px;
+  font-size: 55px;
+  white-space: nowrap;
+}
+.datarocks-boot-stage .welcome-panel{
+  position: absolute;
+  top: -59px;
+  left: 5px;
+  width: 470px;
+  height: 392px;
+  background: #080a08;
+}
+.datarocks-boot-stage .welcome-company{
+  position: absolute;
+  top: 67px;
+  left: 35px;
+  width: 410px;
+  height: 60px;
+}
+.datarocks-boot-stage .welcome-company strong{
+  display: block;
+  position: absolute;
+  inset: 0;
+  padding: 5px 8px;
+  background: transparent;
+  color: #080a08;
+  font-size: 48px;
+  line-height: 50px;
+  white-space: nowrap;
+  letter-spacing: -0.5px;
+}
+.datarocks-boot-stage .welcome-company .welcome-highlight{
+  background: #080a08;
+  color: #eeede8;
+}
+.datarocks-boot-stage .welcome-database{
+  position: absolute;
+  top: 134px;
+  left: 0;
+  width: 100%;
+  font-size: 36px;
+  line-height: 43px;
+  white-space: nowrap;
+}
+.datarocks-boot-stage .welcome-logo{
+  position: absolute;
+  top: 187px;
+  left: 138.5px;
+  margin: 0;
+}
+.datarocks-startup{position:fixed;inset:0;z-index:1000;background:#e8e5e1;overflow:hidden;color:#080a08;font-family:MiSans,sans-serif}
+.datarocks-boot-stage{position:absolute;left:50%;top:50%;width:1920px;height:1080px;transform-origin:center;isolation:isolate;background:#e8e5e1;overflow:hidden}
+.datarocks-boot-stage *{box-sizing:border-box;transition:none!important;animation:none!important}
+.datarocks-boot-stage .auth-status i{display:none}
+.datarocks-boot-stage .brand h1{margin:0}
+.datarocks-boot-skip{position:absolute;right:30px;bottom:24px;border:0;border-bottom:1px solid #8b8d83;background:transparent;color:#41463e;padding:10px 0;font:inherit;font-size:11px;letter-spacing:1px;cursor:pointer}
+.datarocks-boot-skip:focus-visible{outline:2px solid #41463e;outline-offset:5px}
+
+/* A narrow sky-blue edge fades across the opening into Gotham's deep blue. */
+.datarocks-startup{background:linear-gradient(105deg,#8edbfa 0%,#6cc6ef 10%,#327daf 34%,#18466e 60%,#0b2948 82%,#061a30 100%);color:#e8f4ff}
+.datarocks-boot-stage,.datarocks-boot-stage .boot-background{background:transparent}
+.datarocks-boot-stage .boot-white{background:transparent}
+.datarocks-boot-stage .brand{color:#0b2941}
+.datarocks-boot-stage .powered i{background:#a7d8f6}
+.datarocks-boot-stage .boot-logo text,.datarocks-boot-stage .welcome-logo text{fill:currentColor}
+.datarocks-boot-stage .welcome-panel{background:#d9efff}
+.datarocks-boot-stage .welcome-company strong{color:#e8f4ff}
+.datarocks-boot-stage .welcome-company .welcome-highlight{background:#d9efff;color:#10344f}
+.datarocks-boot-stage .scan g{stroke:#c8ebff}
+.datarocks-boot-stage .scan .orbit-dot{fill:#82e1ff}
+.datarocks-boot-stage .scan .scan-core{fill:#e8f4ff}
+.datarocks-boot-skip{color:#c0dced;border-bottom-color:#6789a5}
+.datarocks-boot-skip:focus-visible{outline-color:#c0dced}

@@ -5,7 +5,7 @@ import { Search, FileText, Folder, ChevronRight } from './Icons';
 
 export default function ArchiveWorkspace({manager,params}:{manager:WorkspaceManagerAPI;params?:Record<string,unknown>}) {
   const {data}=useBusiness();
-  const docs=data.documents.filter(d=>!params?.equipmentId||d.equipmentId===params.equipmentId);
+  const docs=data.documents.filter(d=>!params?.equipmentId||d.equipmentId===params.equipmentId||(!d.equipmentId&&d.mineId==='yulong-mine'));
   const categories=[...new Set(docs.map(d=>d.category))].map(name=>({id:name,name,count:docs.filter(d=>d.category===name).length}));
   const [query, setQuery] = useState('');
   const [selectedDocId, setSelectedDocId] = useState<string | null>(null);
@@ -13,7 +13,7 @@ export default function ArchiveWorkspace({manager,params}:{manager:WorkspaceMana
 
   useEffect(()=>{setSelectedDocId(null);setActiveCategory(null);setQuery('');},[params?.equipmentId]);
   const filtered = docs.filter((d) => {
-    const matchQuery = d.title.toLowerCase().includes(query.toLowerCase()) || d.id.toLowerCase().includes(query.toLowerCase());
+    const matchQuery = [d.title,d.id,d.summary,d.body,d.source].join(' ').toLowerCase().includes(query.toLowerCase());
     const matchCat = activeCategory ? d.category === activeCategory : true;
     return matchQuery && matchCat;
   });
@@ -65,6 +65,7 @@ export default function ArchiveWorkspace({manager,params}:{manager:WorkspaceMana
         {filtered.map((doc) => (
           <button
             key={doc.id}
+            title={`${doc.id} · ${doc.title}`}
             className={`list-row ${selectedDocId === doc.id ? 'selected' : ''}`}
             onClick={() => setSelectedDocId(doc.id)}
           >
@@ -89,10 +90,11 @@ export default function ArchiveWorkspace({manager,params}:{manager:WorkspaceMana
             <div className="preview-meta">
               <span>创建日期: {selectedDoc.date}</span>
               <span>分类: {selectedDoc.category}</span>
+              <span>来源: {selectedDoc.source??'历史档案'}</span>
               <span>密级: 内部</span>
             </div>
             <div className="preview-content">
-              <p>{selectedDoc.body}</p><button className="action-btn" onClick={()=>manager.openWorkspace('mine','玉龙矿区',{equipmentId:selectedDoc.equipmentId,mineId:'yulong-mine'})}>返回来源设备</button>
+              <p>{selectedDoc.summary}</p>{selectedDoc.body.split('\n').map((p,i)=><p key={i}>{p}</p>)}{selectedDoc.equipmentId&&<button className="action-btn" onClick={()=>manager.openWorkspace('mine','玉龙矿区',{equipmentId:selectedDoc.equipmentId,mineId:selectedDoc.mineId??'yulong-mine'})}>返回来源设备</button>}
             </div>
           </div>
         ) : (

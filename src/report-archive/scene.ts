@@ -103,7 +103,7 @@ export class MetalScene {
   private entry = { value: 0, velocity: 0 };
   onPick?: (cell: Cell) => void;
   onOpen?: () => void;
-  onHover?: (code: string | null, x: number, y: number) => void;
+  onHover?: (record: ReturnType<typeof recordAt> | null) => void;
 
   constructor(private host: HTMLElement) {
     this.renderer = new T.WebGLRenderer({
@@ -506,15 +506,7 @@ export class MetalScene {
       if (this.detailTarget || !this.ready) return;
       const hit = this.pick(e);
       const record = hit ? recordAt(hit.lane, hit.row) : null;
-      this.onHover?.(
-        record
-          ? record.id
-            ? record.code + " / ACCESS ARCHIVE"
-            : record.category + " / 暂无报告"
-          : null,
-        e.clientX,
-        e.clientY,
-      );
+      this.onHover?.(record);
       canvas.style.cursor = hit ? "pointer" : "default";
     });
     canvas.addEventListener("pointerup", (e) => {
@@ -535,7 +527,7 @@ export class MetalScene {
     });
     canvas.addEventListener("pointercancel", () => (this.down = null));
     canvas.addEventListener("pointerleave", () => {
-      this.onHover?.(null, 0, 0);
+      this.onHover?.(null);
     });
   }
   private pick(e: PointerEvent) {

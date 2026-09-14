@@ -22,7 +22,7 @@ test("HTTP workflow, idempotency, exact versions, persistence and input errors",
     return { status: r.status, body: await r.json() };
   };
   try {
-    assert.equal((await call("/equipment")).body.total, 3);
+    assert.equal((await call("/equipment")).body.total, 6);
     await call("/demo/reset", { preset: "empty", confirm: true });
     assert.equal((await call("/reports")).body.total, 0);
     const command = {

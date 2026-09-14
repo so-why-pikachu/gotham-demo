@@ -1,11 +1,12 @@
+import {enrichEquipment,buildDocuments,buildTelemetry} from './scenario.mjs';
 export const mines = [
-  { id: "yulong-mine", name: "玉龙矿区" },
-  { id: "haerwusu-mine", name: "哈尔乌素露天煤矿" },
-  { id: "antaibao-mine", name: "平朔安太堡露天煤矿" },
-  { id: "zhujia-baobao-mine", name: "攀枝花朱家包包铁矿" },
+  { id: "yulong-mine", name: "玉龙矿区",region:'西藏',mineral:'铜矿',operator:'玉龙工程一队（虚构）',connected:true },
+  { id: "haerwusu-mine", name: "哈尔乌素露天煤矿",region:'内蒙古',mineral:'煤矿',operator:'待登记',connected:false },
+  { id: "antaibao-mine", name: "平朔安太堡露天煤矿",region:'山西',mineral:'煤矿',operator:'待登记',connected:false },
+  { id: "zhujia-baobao-mine", name: "攀枝花朱家包包铁矿",region:'四川',mineral:'铁矿',operator:'待登记',connected:false },
 ];
 export const customers = [
-  { id: "yulong", name: "玉龙铜业（演示）", category: "战略客户" },
+  { id: "yulong", name: "玉龙项目采购组（虚构）", category: "战略客户" },
 ];
 export const equipment = [
   {
@@ -35,67 +36,28 @@ export const equipment = [
     modelUri: "/models/XC958U.glb",
     hours: 4600,
   },
-].map((e) => ({ ...e, mineId: "yulong-mine", customerId: "yulong" }));
-export const documents = equipment.flatMap((e) => [
-  {
-    id: `WO-${e.id}`,
-    equipmentId: e.id,
-    title: `${e.name} · 维修记录`,
-    category: "维修工单",
-    date: "2026-09-10",
-    body: `模拟工单：${e.name} 已完成例行保养，需关联历史维修成本与当前工况。此记录不代表真实设备维修史。`,
-  },
-  {
-    id: `HISTORY-${e.id}`,
-    equipmentId: e.id,
-    title: `${e.name} · 历史复核依据`,
-    category: "维修工单",
-    date: "2026-09-11",
-    body: "模拟复核证据：历史中修记录、停机成本与部件磨损记录已补充。用于演示诊断版本变化，不是实际维修建议。",
-  },
-  {
-    id: `KB-${e.id}`,
-    equipmentId: e.id,
-    title: `${e.name} · 维护案例`,
-    category: "知识案例",
-    date: "2026-09-09",
-    body: "模拟知识库案例：关联设备告警与维护方案，现场复核后再作处置。所有数值为演示假设。",
-  },
-]);
+].flatMap(e=>[e,{...e,id:e.id.replace('-01','-02'),name:e.name+' · 02',hours:Math.round(e.hours*.6),status:'active'}])
+ .map((e,i) => enrichEquipment({ ...e, mineId: "yulong-mine", customerId: "yulong" },i));
+export const documents = buildDocuments(equipment);
 export function evidenceSources(id) {
-  return [
-    {
-      id: `IOT-${id}`,
-      equipmentId: id,
-      title: "汉云 IoT · 模拟遥测",
-      body: "运行数据为固定样例，不接收真实设备消息。",
-    },
-    ...documents.filter((d) => d.equipmentId === id),
-  ].map((d) => ({ ...d, status: "mock" }));
+  return documents.filter(d=>d.equipmentId===id||(!d.equipmentId&&d.mineId==='yulong-mine')).map(d=>({...d,status:'mock'}));
 }
 export function telemetry(id) {
-  const field =
-    id === "truck-01"
-      ? "冷却液温度"
-      : id === "excavator-01"
-        ? "滤清器压差"
-        : "主泵压力";
-  const unit = id === "truck-01" ? "℃" : "MPa";
-  const value = id === "truck-01" ? 103 : id === "excavator-01" ? 0.85 : 28.5;
-  return Array.from({ length: 12 }, (_, i) => ({
-    equipmentId: id,
-    time: new Date(Date.UTC(2026, 8, 12, 8, i * 5)).toISOString(),
-    field,
-    unit,
-    value: Number((value * (0.96 + i / 275)).toFixed(2)),
-  }));
+  const e=equipment.find(e=>e.id===id);
+  return e?buildTelemetry(e):[];
 }
 export function alerts(id) {
+  if (id.endsWith('-02')) return [];
   return [
     {
       id: `AL-${id}`,
       equipmentId: id,
       severity: "warning",
+      visualization: id === "truck-01"
+        ? { part: "车架与配重", scope: "region", component: "冷却系统" }
+        : id === "excavator-01"
+          ? { part: "动力舱外壳", scope: "region", component: "滤清器" }
+          : { part: "液压与连杆", scope: "region", component: "液压主泵" },
       title:
         id === "truck-01"
           ? "冷却液温度偏高"

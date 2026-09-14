@@ -3,6 +3,13 @@ interface IconProps {
   className?: string;
 }
 
+export function Compose({ size = 16, className = '' }: IconProps) {
+  return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" className={className} aria-hidden="true">
+    <rect x="2" y="3" width="5" height="5" /><rect x="2" y="16" width="5" height="5" />
+    <path d="M7 5.5c6 0 3 6.5 10 6.5M7 18.5c6 0 3-6.5 10-6.5m-3-3 3 3-3 3" /><rect x="18" y="9" width="4" height="6" />
+  </svg>;
+}
+
 export function Search({ size = 16, className = '' }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>

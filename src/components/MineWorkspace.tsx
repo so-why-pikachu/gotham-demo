@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import type { WorkspaceManagerAPI } from "../App";
 import { useBusiness } from "../store/BusinessProvider";
 import { api } from "../api/client";
-import type { Report, List } from "../../shared/contracts";
+import type { Report, List, EquipmentAlert } from "../../shared/contracts";
+import EquipmentModelViewer from './EquipmentModelViewer';
 export default function MineWorkspace({
   manager,
   params,
@@ -22,13 +23,10 @@ export default function MineWorkspace({
     [telemetry, setTelemetry] = useState<
       { field: string; value: number; unit: string }[]
     >([]),
-    [alertList, setAlerts] = useState<{ title: string }[]>([]);
+    [alertList, setAlerts] = useState<EquipmentAlert[]>([]);
   const [busy, setBusy] = useState(false),
     [error, setError] = useState(""),
-    [reload, setReload] = useState(0),
-    [units, setUnits] = useState(1),
-    [delivery, setDelivery] = useState("2026Q4"),
-    [finance, setFinance] = useState(false);
+    [reload, setReload] = useState(0);
   useEffect(() => {
     setSelectedId(String(params?.equipmentId ?? ""));
   }, [params?.equipmentId, mineId]);
@@ -50,8 +48,9 @@ export default function MineWorkspace({
       api<List<any>>("/equipment/" + selected.id + "/alerts", options),
     ])
       .then(([ev, t, a]) => {
+        if (ctrl.signal.aborted) return;
         setEvidence(ev.items);
-        setTelemetry(t.items.slice(-1));
+        setTelemetry([...new Map(t.items.map((p:any)=>[p.field,p])).values()] as {field:string;value:number;unit:string}[]);
         setAlerts(a.items);
       })
       .catch((e) => {
@@ -67,7 +66,7 @@ export default function MineWorkspace({
         ...(body as object),
         requestId: crypto.randomUUID(),
       });
-      manager.openWorkspace("report", "商业报告", {
+      manager.openWorkspace("report", "报告", {
         reportId: r.id,
         version: r.version,
       });
@@ -82,7 +81,7 @@ export default function MineWorkspace({
       <aside className="mine-sidebar">
         <div className="sidebar-header">
           <h3>{data.mines.find((m) => m.id === mineId)?.name ?? "矿区"}</h3>
-          <span className="sidebar-sub">对象列表 · 模拟数据</span>
+          <span className="sidebar-sub">对象列表 · 玉龙工程一队</span>
         </div>
         <div className="object-list">
           {objects.map((obj) => (
@@ -102,17 +101,17 @@ export default function MineWorkspace({
         </div>
       </aside>
       <section className="mine-map">
+        {selected ? <EquipmentModelViewer key={selected.id} equipment={selected} alerts={alertList.filter(a=>a.equipmentId===selected.id)}/> : (
         <div className="map-placeholder inner">
           <div className="map-grid" />
           <div className="map-overlay">
             <p>MAP WORKSPACE</p>
             <p className="map-coords">
-              {selected
-                ? `${selected.model} / ${selected.id}`
-                : "矿区地形 · 二维占位"}
+              选择设备以查看三维结构
             </p>
           </div>
         </div>
+        )}
       </section>
       <aside className="mine-inspector">
         <div className="inspector-header">
@@ -128,7 +127,7 @@ export default function MineWorkspace({
               </span>
             </div>
             <div className="inspector-section">
-              <h4>运行数据 · 模拟</h4>
+              <h4>运行数据 · 9月12日快照</h4>
               <div className="stat-row">
                 <span>累计工时</span>
                 <span>{selected.hours} h</span>
@@ -211,65 +210,21 @@ export default function MineWorkspace({
                   >
                     补充维修史并复核 · v{diagnosis.version}
                   </button>
-                  <h4>需求报告草稿</h4>
-                  <label>
-                    数量
-                    <select
-                      aria-label="需求数量"
-                      value={units}
-                      onChange={(e) => setUnits(Number(e.target.value))}
-                    >
-                      <option value={1}>1 台／套</option>
-                      <option value={2}>2 台／套</option>
-                    </select>
-                  </label>
-                  <label>
-                    交期
-                    <select
-                      aria-label="交付窗口"
-                      value={delivery}
-                      onChange={(e) => setDelivery(e.target.value)}
-                    >
-                      <option>2026Q4</option>
-                      <option>2027Q1</option>
-                    </select>
-                  </label>
-                  <label>
-                    <input
-                      type="checkbox"
-                      checked={finance}
-                      onChange={(e) => setFinance(e.target.checked)}
-                    />{" "}
-                    融资方案（模拟）
-                  </label>
                   <button
                     className="action-btn"
                     disabled={busy}
                     onClick={() =>
-                      void perform("/business-reports", {
+                      manager.openWorkspace("compose", "报告编排", {
+                        equipmentId: selected.id,
                         sourceId: diagnosis.id,
                         sourceVersion: diagnosis.version,
-                        units,
-                        delivery,
-                        finance,
                       })
                     }
                   >
-                    生成需求报告
+                    进入报告编排
                   </button>
                 </>
               )}
-              <button
-                className="action-btn secondary"
-                onClick={() =>
-                  manager.openWorkspace("report", "商业报告", {
-                    reportId: diagnosis?.id,
-                    version: diagnosis?.version,
-                  })
-                }
-              >
-                查看商业报告
-              </button>
               <button
                 className="action-btn secondary"
                 onClick={() =>

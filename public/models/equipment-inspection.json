@@ -1,0 +1,354 @@
+{
+  "version": 1,
+  "internalGeometry": false,
+  "models": {
+    "XDE240": {
+      "uri": "/models/mine_truck.glb",
+      "parts": {
+        "车架与配重": [
+          "Chassis"
+        ],
+        "驾驶室": [
+          "Cabin"
+        ],
+        "工作装置": [
+          "DumpBed"
+        ],
+        "行走机构": [
+          "Wheel_FL",
+          "Wheel_FR",
+          "Wheel_RL1",
+          "Wheel_RR1",
+          "Wheel_RL2",
+          "Wheel_RR2"
+        ]
+      },
+      "views": {
+        "斜视": {
+          "camera": "Review_Perspective",
+          "direction": [
+            -0.5520382523536682,
+            0.4375954568386078,
+            -0.7097634673118591
+          ]
+        },
+        "正面": {
+          "camera": "Review_Front",
+          "direction": [
+            0.0,
+            -0.00010294072853866965,
+            -1.0
+          ]
+        },
+        "侧视": {
+          "camera": "Review_Side",
+          "direction": [
+            -1.0,
+            -0.00010294072853866965,
+            -0.0
+          ]
+        },
+        "俯视": {
+          "camera": "Review_Top",
+          "direction": [
+            0.0,
+            1.0,
+            -0.0
+          ]
+        }
+      },
+      "partViews": {
+        "车架与配重": {
+          "camera": "Gotham_Local_XDE240_车架与配重",
+          "direction": [
+            -0.5720775723457336,
+            0.4767313003540039,
+            0.6674237847328186
+          ]
+        },
+        "驾驶室": {
+          "camera": "Gotham_Local_XDE240_驾驶室",
+          "direction": [
+            -0.5720775723457336,
+            0.4767313003540039,
+            0.6674237847328186
+          ]
+        },
+        "工作装置": {
+          "camera": "Gotham_Local_XDE240_工作装置",
+          "direction": [
+            -0.5720775723457336,
+            0.4767313003540039,
+            0.6674237847328186
+          ]
+        },
+        "行走机构": {
+          "camera": "Gotham_Local_XDE240_行走机构",
+          "direction": [
+            -0.5720775723457336,
+            0.4767313003540039,
+            0.6674237847328186
+          ]
+        }
+      }
+    },
+    "XE215C": {
+      "uri": "/models/XE215C.glb",
+      "parts": {
+        "车架与配重": [
+          "XE215C_Undercarriage",
+          "XE215C_UpperCarriage",
+          "XE215C_Counterweight"
+        ],
+        "行走机构": [
+          "XE215C_Track_L",
+          "XE215C_TrackWheels_L",
+          "XE215C_Track_R",
+          "XE215C_TrackWheels_R"
+        ],
+        "动力舱外壳": [
+          "XE215C_EngineHouse"
+        ],
+        "驾驶室": [
+          "XE215C_Cabin"
+        ],
+        "附件": [
+          "XE215C_ServiceDetails",
+          "XE215C_ModelLabel"
+        ],
+        "工作装置": [
+          "XE215C_Boom",
+          "XE215C_Stick",
+          "XE215C_Bucket"
+        ],
+        "液压与连杆": [
+          "XE215C_BucketLink",
+          "XE215C_Cylinder_Boom_L",
+          "XE215C_Rod_Boom_L",
+          "XE215C_Cylinder_Boom_R",
+          "XE215C_Rod_Boom_R",
+          "XE215C_Cylinder_Stick",
+          "XE215C_Rod_Stick",
+          "XE215C_Cylinder_Bucket",
+          "XE215C_Rod_Bucket",
+          "XE215C_BoomHoses"
+        ]
+      },
+      "views": {
+        "斜视": {
+          "camera": "XE215C_View_Perspective",
+          "direction": [
+            -0.6514265537261963,
+            0.38298454880714417,
+            -0.6549551486968994
+          ]
+        },
+        "侧视": {
+          "camera": "XE215C_View_Side",
+          "direction": [
+            -1.0,
+            -5.418604231977042e-09,
+            5.418604231977042e-09
+          ]
+        },
+        "正面": {
+          "camera": "XE215C_View_Front",
+          "direction": [
+            0.0,
+            -5.402641445328982e-09,
+            -1.0
+          ]
+        },
+        "俯视": {
+          "camera": "XE215C_View_Top",
+          "direction": [
+            0.0,
+            0.9999999403953552,
+            5.308808059822923e-09
+          ]
+        }
+      },
+      "partViews": {
+        "车架与配重": {
+          "camera": "Gotham_Local_XE215C_车架与配重",
+          "direction": [
+            -0.5720775723457336,
+            0.4767313003540039,
+            0.6674237847328186
+          ]
+        },
+        "行走机构": {
+          "camera": "Gotham_Local_XE215C_行走机构",
+          "direction": [
+            -0.5720775723457336,
+            0.4767313003540039,
+            0.6674237847328186
+          ]
+        },
+        "动力舱外壳": {
+          "camera": "Gotham_Local_XE215C_动力舱外壳",
+          "direction": [
+            -0.5720775723457336,
+            0.4767313003540039,
+            0.6674237847328186
+          ]
+        },
+        "驾驶室": {
+          "camera": "Gotham_Local_XE215C_驾驶室",
+          "direction": [
+            -0.5720775723457336,
+            0.4767313003540039,
+            0.6674237847328186
+          ]
+        },
+        "附件": {
+          "camera": "Gotham_Local_XE215C_附件",
+          "direction": [
+            -0.5720775723457336,
+            0.4767313003540039,
+            0.6674237847328186
+          ]
+        },
+        "工作装置": {
+          "camera": "Gotham_Local_XE215C_工作装置",
+          "direction": [
+            -0.5720775723457336,
+            0.4767313003540039,
+            0.6674237847328186
+          ]
+        },
+        "液压与连杆": {
+          "camera": "Gotham_Local_XE215C_液压与连杆",
+          "direction": [
+            -0.5720775723457336,
+            0.4767313003540039,
+            0.6674237847328186
+          ]
+        }
+      }
+    },
+    "XC958U": {
+      "uri": "/models/XC958U.glb",
+      "parts": {
+        "车架与配重": [
+          "XC958U_RearFrame",
+          "XC958U_Counterweight",
+          "XC958U_RearFenders_Steps",
+          "XC958U_FrontFrame",
+          "XC958U_FrontFenders"
+        ],
+        "动力舱外壳": [
+          "XC958U_EngineHood"
+        ],
+        "驾驶室": [
+          "XC958U_Cabin",
+          "XC958U_CabAccessories"
+        ],
+        "工作装置": [
+          "XC958U_LiftArms",
+          "XC958U_Bucket"
+        ],
+        "液压与连杆": [
+          "XC958U_TiltRocker",
+          "XC958U_BucketLink",
+          "XC958U_Cylinder_Lift_L",
+          "XC958U_Piston_Lift_L",
+          "XC958U_Cylinder_Lift_R",
+          "XC958U_Piston_Lift_R",
+          "XC958U_Cylinder_Tilt",
+          "XC958U_Piston_Tilt"
+        ],
+        "行走机构": [
+          "XC958U_Wheel_FL",
+          "XC958U_Wheel_RL",
+          "XC958U_Wheel_FR",
+          "XC958U_Wheel_RR"
+        ]
+      },
+      "views": {
+        "斜视": {
+          "camera": "XC958U_View_Perspective",
+          "direction": [
+            -0.5952556729316711,
+            0.3680168092250824,
+            -0.7143068313598633
+          ]
+        },
+        "正面": {
+          "camera": "XC958U_View_Front",
+          "direction": [
+            0.0,
+            -0.0009722242248244584,
+            -0.9999995827674866
+          ]
+        },
+        "侧视": {
+          "camera": "XC958U_View_Side",
+          "direction": [
+            -0.9999995827674866,
+            -0.0009722242248244584,
+            -0.0
+          ]
+        },
+        "俯视": {
+          "camera": "XC958U_View_Top",
+          "direction": [
+            0.0,
+            1.0,
+            -0.0
+          ]
+        }
+      },
+      "partViews": {
+        "车架与配重": {
+          "camera": "Gotham_Local_XC958U_车架与配重",
+          "direction": [
+            -0.5720775723457336,
+            0.4767313003540039,
+            0.6674237847328186
+          ]
+        },
+        "动力舱外壳": {
+          "camera": "Gotham_Local_XC958U_动力舱外壳",
+          "direction": [
+            -0.5720775723457336,
+            0.4767313003540039,
+            0.6674237847328186
+          ]
+        },
+        "驾驶室": {
+          "camera": "Gotham_Local_XC958U_驾驶室",
+          "direction": [
+            -0.5720775723457336,
+            0.4767313003540039,
+            0.6674237847328186
+          ]
+        },
+        "工作装置": {
+          "camera": "Gotham_Local_XC958U_工作装置",
+          "direction": [
+            -0.5720775723457336,
+            0.4767313003540039,
+            0.6674237847328186
+          ]
+        },
+        "液压与连杆": {
+          "camera": "Gotham_Local_XC958U_液压与连杆",
+          "direction": [
+            -0.5720775723457336,
+            0.4767313003540039,
+            0.6674237847328186
+          ]
+        },
+        "行走机构": {
+          "camera": "Gotham_Local_XC958U_行走机构",
+          "direction": [
+            -0.5720775723457336,
+            0.4767313003540039,
+            0.6674237847328186
+          ]
+        }
+      }
+    }
+  }
+}

@@ -10,7 +10,7 @@ export const wrap = (n: number, count: number) =>
   count ? ((n % count) + count) % count : 0;
 export const key = (lane: number, row: number) => `${lane}:${row}`;
 export function adapt(r: Report, index = 0) {
-  const column = r.type === "diagnosis" ? (r.reviewed ? 1 : 0) : r.sent ? 3 : 2;
+  const column = r.collection ? ['diagnosis','reviews','demand','follow-up','archive'].indexOf(r.collection) : r.type === "diagnosis" ? (r.reviewed ? 1 : 0) : r.sent ? 3 : 2;
   return {
     id: r.id,
     code: r.id,
@@ -18,7 +18,7 @@ export function adapt(r: Report, index = 0) {
     category: categories[column],
     column,
     index,
-    subtitle: `${r.equipmentId} · v${r.version} · 演示模拟数据`,
+    subtitle: `${r.equipmentId} · v${r.version} · ${r.createdAt.slice(0,10)}`,
     date: r.createdAt.slice(0, 10),
     summary: r.conclusion,
     findings: r.evidence,

@@ -39,6 +39,8 @@ npm run dev
 
 场景一已接入宏观指标、预制地图导航和设备档案浮层，使用与验证说明见 [场景一实施记录](docs/scene-one-delivery.md)。
 
+Operations 中央支持现有设备模型与部件查看，Blender 工程和使用说明见 [设备模型查看器](docs/operations-model-viewer.md)。
+
 1. 点击 Operations，选 XE215C，展开遥测与维修证据。
 2. 发起诊断或补充维修史复核，自动进入商业报告；可切换 v1/v2。
 3. 报告中“返回来源设备”，选择数量、交期及融资选项，生成需求报告。

@@ -13,6 +13,7 @@ const typeIcon: Record<string, string> = {
   mine: '◉',
   report: '▤',
   archive: '▣',
+  compose: '⤳',
 };
 
 export default function TabBar({ workspaces, activeId, onActivate, onClose }: TabBarProps) {

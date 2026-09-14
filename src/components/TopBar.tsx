@@ -1,12 +1,12 @@
 import type { Workspace } from '../types/workspace.ts';
-import { Activity, BarChart3, Bell, Globe2, Layers3, Search, Settings, User } from './Icons';
+import { Activity, BarChart3, Bell, Globe2, Layers3, Search, Settings, User, Compose } from './Icons';
 import TabBar from './TabBar';
 
 interface TopBarProps {
   activeWorkspace: Workspace | null;
   workspaces: Workspace[];
   activeId: string | null;
-  onOpenWorkspace: (type: 'global' | 'mine' | 'report' | 'archive', title: string) => void;
+  onOpenWorkspace: (type: 'global' | 'mine' | 'report' | 'archive' | 'compose', title: string) => void;
   onActivateWorkspace: (id: string) => void;
   onCloseWorkspace: (id: string) => void;
 }
@@ -15,7 +15,8 @@ const navigationItems = [
   { type: 'global', title: 'Global Overview', label: 'Global overview', icon: Globe2 },
   { type: 'mine', title: '玉龙矿区', label: 'Operations', icon: Activity },
   { type: 'archive', title: '资料库', label: 'Archive', icon: Layers3 },
-  { type: 'report', title: '商业报告', label: 'Reports', icon: BarChart3 },
+  { type: 'compose', title: '报告编排', label: 'Compose', icon: Compose },
+  { type: 'report', title: '报告', label: 'Reports', icon: BarChart3 },
 ] as const;
 
 export default function TopBar({
@@ -66,6 +67,7 @@ export default function TopBar({
       />
 
       <div className="topbar-right">
+        <span className="scene-caption" title="所有运营、技术及商务内容均为演示场景假设">演示环境</span>
         <div className="global-search">
           <Search size={14} />
           <input type="text" placeholder="全局搜索…" />

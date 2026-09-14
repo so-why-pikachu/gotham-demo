@@ -80,7 +80,7 @@ export default function ReportWorkspace({
         const p = m.payload ?? {};
         if (m.type === "SELECT_REPORT") {
           if (typeof p.id !== "string") throw Error("报告编号无效");
-          current.current.manager.openWorkspace("report", "商业报告", {
+          current.current.manager.openWorkspace("report", "报告", {
             reportId: p.id,
             version: p.version,
             detail: p.openDetail !== false,
@@ -149,12 +149,12 @@ export default function ReportWorkspace({
       ).catch((e) => post("ERROR", { message: e.message }));
   }, [data.reports, params?.reportId, params?.version, params?.detail]);
   return (
-    <section className="workspace report-workspace" aria-label="商业报告">
+    <section className="workspace report-workspace" aria-label="报告">
       <iframe
         ref={frame}
         className="report-archive-frame"
         src="/report-archive/index.html"
-        title="商业报告 · 金属档案库"
+        title="报告 · 金属档案库"
         onLoad={(e) => e.currentTarget.contentWindow?.focus()}
       />
     </section>

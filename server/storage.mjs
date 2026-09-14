@@ -1,10 +1,11 @@
-import { readFile, mkdir, writeFile, rename } from "node:fs/promises";
+import { readFile, mkdir, writeFile, rename, copyFile } from "node:fs/promises";
 import path from "node:path";
-import { seedState } from "./domain/reports.mjs";
+import { seedState,migrateScenario } from "./domain/reports.mjs";
 export async function openStore(file) {
-  let state;
+  let state,existingFile=false;
   try {
     state = JSON.parse(await readFile(file, "utf8"));
+    existingFile=true;
     if (
       state.schema !== 1 ||
       !Array.isArray(state.reports) ||
@@ -22,6 +23,7 @@ export async function openStore(file) {
     await writeFile(file + ".tmp", JSON.stringify(next, null, 2));
     await rename(file + ".tmp", file);
   };
+  if(existingFile && migrateScenario(state)) await copyFile(file,file+'.pre-dataset-v2-'+Date.now()+'.bak');
   await persist(state);
   return {
     read: () => structuredClone(state),

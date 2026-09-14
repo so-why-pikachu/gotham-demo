@@ -1,6 +1,6 @@
 import "./vendor/rolling-number/styles.css";
 import "./style.css";
-import { createRollingNumber } from "./vendor/rolling-number/index.js";
+import { createRollingNumber, createRollingText } from "./vendor/rolling-number/index.js";
 import { ScrubTitle } from "./shared/scrub-title";
 import { MetalScene } from "./scene";
 import {
@@ -13,6 +13,7 @@ import {
   adapt,
 } from "./data";
 import type { Report, BridgeMessage } from "../../shared/contracts";
+import { isDemandReport } from '../../shared/report-actions.mjs';
 
 const $ = <T extends HTMLElement = HTMLElement>(s: string) =>
   document.querySelector<T>(s)!;
@@ -23,12 +24,12 @@ $("#stage").innerHTML = `
  <div id="scene"></div><div class="atmosphere"></div><div class="frame-line"></div>
  <section class="hero" aria-label="Archive Lab"><p class="overline">SYNTHESIZE INFORMATION</p><h1>ARCHIVE LAB<span>ANALYSIS <b>OS</b></span></h1><i></i><p class="principles">PEOPLE　 DATA　 CONTEXT　 INSIGHT</p></section>
  <nav class="utility"><button data-action="search">${icon("search")} ARCHIVE INDEX <kbd>/</kbd></button><span class="divider"></span><button data-action="saved">SAVED <span id="saved-count">00</span></button><span class="divider"></span><button data-action="activity" aria-label="最近浏览">${icon("clock")}</button><span class="divider"></span><button data-action="settings" aria-label="档案显示设置" title="显示设置">${icon("grid")}</button></nav>
- <aside class="manifesto"><i></i><p>A CENTRAL ARCHIVE<br>FOR A MORE<br>CONNECTED WORLD.</p><i></i><p>CLASSIFY<br>RESEARCH<br>PRESERVE<br>ENABLE</p></aside>
+ <aside class="archive-preview" aria-label="档案预览"><span id="preview-code"></span><span class="preview-divider">/</span><span id="preview-title"></span></aside>
  <aside class="mission"><p>KNOWLEDGE<br>PRESERVES<br>PERSPECTIVE.</p><i></i><p>A MORE<br>INFORMED<br>TOMORROW</p></aside>
  <section class="file-callout" aria-live="polite"><p class="eyebrow">INTERNAL DATABASE <span>/</span><i></i> <span id="eyebrow-category">RESEARCH ARCHIVE</span></p>
  <button class="file-number" data-action="open">FILE NUMBER: <span id="code">002</span></button><div class="long-rule"><i></i></div>
  <div class="file-meta"><h2 id="file-title">Structural Boundaries</h2><span>REFERENCE AREA <i></i></span></div><p id="file-subtitle">Classification, Containment and Long-Term Preservation</p>
- <button class="access" data-action="open"><span class="circle-arrow">${icon("arrow")}</span><strong>ACCESS FILE</strong>${icon("arrow")}</button></section>
+ <button class="access" data-action="open"><strong>ACCESS FILE</strong>${icon("arrow")}</button></section>
  <aside class="network">${map}<p>GLOBAL KNOWLEDGE NETWORK <i></i></p></aside>
  <section class="browse-controls"><div class="counter"><p>ARCHIVE : SELECT</p><div><span id="number">01</span><small>/　08</small></div></div>
  <div class="row-control"><button data-action="prev" aria-label="上一份档案">‹</button><div id="ticks" aria-label="选择档案"></div><button data-action="next" aria-label="下一份档案">›</button><p>↑ ↓ BROWSE ARCHIVES</p></div>
@@ -37,7 +38,7 @@ $("#stage").innerHTML = `
  <footer><p><i></i> SESSION AUTHORIZED</p><p>INTELLIGENCE FOR A SAFER TOMORROW <i></i></p></footer>
  <section id="detail" hidden><button class="back" data-action="back">← <span>ARCHIVE OVERVIEW</span><kbd>ESC</kbd></button><div class="model-caption"><span id="model-code"></span><p id="drag-hint">LIFTING ARCHIVE…</p><button data-action="viewer">360° OBJECT STUDY ${icon("arrow")}</button></div>
  <article id="detail-content"><p class="eyebrow">RESEARCH ARCHIVE / <span id="detail-code"></span></p><h2 id="detail-title"></h2><p id="detail-subtitle"></p><nav class="detail-tabs"><button data-tab="overview" class="active">OVERVIEW</button><button data-tab="documents">DOCUMENTS</button><button data-tab="related">RELATED</button><button data-tab="analysis">ANALYSIS</button></nav><div id="detail-body"></div><div class="detail-actions"><button data-action="save" id="save-button">＋ SAVE ARCHIVE</button><button data-action="export">EXPORT ↗</button></div><p class="record-note">ARCHIVE LAB / DEMONSTRATION COLLECTION</p></article></section>
- <div id="hover" hidden></div><div id="loading"><img src="/report-archive/brand/archive-logo.svg" alt=""><p>CONNECTING TO THE ARCHIVE</p><span>PREPARING REPORT COLLECTION</span></div><div id="toast" role="status"></div>`;
+ <div id="loading"><img src="/report-archive/brand/archive-logo.svg" alt=""><p>CONNECTING TO THE ARCHIVE</p><span>PREPARING REPORT COLLECTION</span></div><div id="toast" role="status"></div>`;
 
 document.body.insertAdjacentHTML(
   "beforeend",
@@ -93,10 +94,26 @@ const options = {
   locales: "en-US",
   format: { minimumIntegerDigits: 2, useGrouping: false },
   duration: 460,
+  mode: 'roll' as const,
   motionBlur: true,
   animated: !prefs.reduced,
 };
 const number = createRollingNumber($("#number"), { ...options, value: 1 });
+const previewCode = createRollingText($("#preview-code"), {
+  text: '—', charset: '0123456789', mode: 'roll',
+  duration: 460, motionBlur: true, animated: !prefs.reduced,
+});
+let previewKey = '';
+function preview(item: ReturnType<typeof recordAt>) {
+  const key = `${item.id}:${item.column}:${item.index}:${item.title}:${prefs.reduced}`;
+  if (key === previewKey) return;
+  previewKey = key;
+  previewCode.update({text: item.id ? item.code : '—', animated: !prefs.reduced});
+  $("#preview-title").textContent = item.title;
+  $(".archive-preview").setAttribute('aria-label', `${item.code} / ${item.title}`);
+  number.update({value: item.id ? item.index + 1 : 0, animated: !prefs.reduced});
+  $(".counter small").textContent = '/ ' + String(columnCount(item.column)).padStart(2, '0');
+}
 const column = createRollingNumber($("#column"), { ...options, value: 1 });
 const title = new ScrubTitle($("#file-title"));
 let scene: MetalScene;
@@ -123,10 +140,7 @@ function persist() {
 }
 function selection() {
   const item = recordAt(lane, row);
-  number.update({
-    value: item.id ? item.index + 1 : 0,
-    animated: !prefs.reduced,
-  });
+  preview(item);
   column.update({ value: item.column + 1, animated: !prefs.reduced });
   $("#code").textContent = item.code;
   $(".counter small").textContent =
@@ -203,7 +217,7 @@ function openDetail(nextTab = "overview") {
     id,
     version: selectedVersion?.id === id ? selectedVersion.version : undefined,
   });
-  $("#hover").hidden = true;
+  preview(recordAt(lane, row));
   $("#detail .back").focus({ preventScroll: true });
   rememberSession();
 }
@@ -440,7 +454,7 @@ function renderBusinessDetail(r: ReturnType<typeof recordAt>) {
   const head = `<div class="record-facts"><span>VERSION<select id="report-version" aria-label="报告版本">${(versionOptions.length ? versionOptions : [report]).map((v) => `<option value="${v.version}" ${v.version === report.version ? "selected" : ""}>v${v.version}</option>`).join("")}</select></span><span>AMOUNT<strong>¥${(report.amountCents / 100).toLocaleString("zh-CN")}</strong></span><span>DEMONSTRATION<strong>模拟数据</strong></span></div>`;
   let body = "";
   if (tab === "overview")
-    body = `<h3>${h(report.conclusion)}</h3><p>${h(report.decision)} · 模拟置信度 ${report.confidence}%</p>${report.type === "business" ? `<p>${report.units} 台／套 · ${h(report.delivery)} · ${report.finance ? "融资方案" : "标准方案"}（演示）</p><button data-business="push" ${report.sent || bridgePending.size ? "disabled" : ""}>${report.sent ? "已模拟推送" : "模拟推送销售团队"}</button>` : "<p>依据设备遥测和维修记录的预置案例生成，不调用真实诊断服务。</p>"}`;
+    body = `<h3>${h(report.conclusion)}</h3><p>${h(report.decision)} · 模拟置信度 ${report.confidence}%</p>${report.type === "business" ? `<p>${report.units} 台／套 · ${h(report.delivery)} · ${report.finance ? "融资方案" : "标准方案"}（演示）</p>${isDemandReport(report) ? `<button data-business="push" ${report.sent || bridgePending.size ? "disabled" : ""}>${report.sent ? "已模拟推送" : "模拟推送销售团队"}</button>` : ''}` : "<p>依据设备遥测和维修记录的预置案例生成，不调用真实诊断服务。</p>"}`;
   else if (tab === "analysis")
     body = report.evidence
       .map(
@@ -456,9 +470,14 @@ function renderBusinessDetail(r: ReturnType<typeof recordAt>) {
     head +
     body +
     `<div class="detail-actions"><button data-business="equipment">返回来源设备 · ${h(report.equipmentId)} ↗</button></div>`;
+  if(tab==='overview') $("#detail-body").insertAdjacentHTML('beforeend',
+    (report.sections??[]).map(s=>`<h3>${h(s.title)}</h3><p>${h(s.body)}</p>`).join('')+
+    (report.costItems?.length?`<h3>费用构成</h3>${report.costItems.map(c=>`<p>${h(c.label)} · ¥${(c.amountCents/100).toLocaleString('zh-CN')}</p>`).join('')}`:''));
+  if(tab==='documents'&&report.evidenceSnapshot) $("#detail-body").insertAdjacentHTML('beforeend',report.evidenceSnapshot.map(d=>`<details><summary>${h(d.title)} · ${h(d.id)}</summary><p>${h(d.body).replaceAll('\n','<br>')}</p></details>`).join(''));
+  if(tab==='related'&&report.parentReportId) $("#detail-body").insertAdjacentHTML('beforeend',`<button data-source-report="${h(report.parentReportId)}" data-source-version="1">上游业务记录 · ${h(report.parentReportId)} ↗</button>`);
   $("#detail-title").textContent = report.title;
   $("#detail-subtitle").textContent =
-    `${report.equipmentId} · v${report.version} · 演示模拟数据`;
+    `${report.equipmentId} · v${report.version} · ${report.createdAt.slice(0,10)}`;
   $("#report-version").addEventListener("change", (e) =>
     sendBridge("SELECT_REPORT", {
       id: r.id,
@@ -559,6 +578,7 @@ async function start() {
       document.fonts.load("400 20px MiSans"),
       document.fonts.load("700 20px MiSans"),
     ]);
+    previewCode.refresh();
     scene = new MetalScene($("#scene"));
     scene.setPreferences(prefs.reduced, prefs.quality);
     await scene.load();
@@ -567,17 +587,7 @@ async function start() {
       select(cell.lane, cell.row);
     };
     scene.onOpen = () => openDetail();
-    scene.onHover = (code, x, y) => {
-      const h = $("#hover");
-      h.hidden = !code;
-      if (code) {
-        h.textContent = code;
-        const rect = $("#stage").getBoundingClientRect(),
-          scale = rect.width / 1920;
-        h.style.left = (x - rect.left) / scale + 18 + "px";
-        h.style.top = (y - rect.top) / scale + 18 + "px";
-      }
-    };
+    scene.onHover = (item) => preview(item ?? recordAt(lane, row));
     scene.refreshLabels();
     $("#loading").classList.add("loaded");
     setTimeout(() => $("#loading").remove(), 600);

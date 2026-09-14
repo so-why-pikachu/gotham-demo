@@ -1,4 +1,4 @@
-import { CHINA_VIEW, YULONG_VIEW } from './locations.js';
+import { getChinaView, YULONG_VIEW } from './locations.js';
 
 const Cesium = globalThis.Cesium;
 
@@ -19,13 +19,13 @@ function toCameraOptions(view) {
 
 // 页面首次打开时直接设置全国视角，避免用户先看到 Cesium 默认视角。
 export function setChinaView(viewer) {
-  viewer.camera.setView(toCameraOptions(CHINA_VIEW));
+  viewer.camera.setView(toCameraOptions(getChinaView(viewer)));
 }
 
 export function flyToChina(viewer) {
   viewer.camera.cancelFlight();
   return viewer.camera.flyTo({
-    ...toCameraOptions(CHINA_VIEW),
+    ...toCameraOptions(getChinaView(viewer)),
     duration: 1.8,
   });
 }

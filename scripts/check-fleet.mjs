@@ -12,28 +12,32 @@ const C = globalThis.Cesium;
 const { buildRouteGeometry, addTerrainHeights } = await import('../src/cesium/route/preprocess.js');
 const { buildFleetTimelines } = await import('../src/cesium/route/fleet.js');
 const { getTimelineState, configureViewerClock } = await import('../src/cesium/route/timeline.js');
-const { TRUCK_ROUTE_WAYPOINTS } = await import('../src/cesium/route/waypoints.js');
+const { MINE_ROUTES } = await import('../src/cesium/route/waypoints.js');
 const { addMineTruck } = await import('../src/cesium/mine-truck.js');
 const { runOrientationBenchmarks } = await import('../src/cesium/route/orientation-benchmarks.js');
 
-const geometry = buildRouteGeometry(TRUCK_ROUTE_WAYPOINTS, 8);
-// Synthetic elevation exercises grade handling without requiring an ion account.
-const heights = geometry.samples.map(s => 4500 + 0.025 * s.distanceFromStart);
-const route = addTerrainHeights(geometry, heights, heights, 0.8);
-const fleet = buildFleetTimelines(route);
+const routes = Object.fromEntries(MINE_ROUTES.map(definition=>{
+  const geometry=buildRouteGeometry(definition.waypoints,8);
+  const heights=geometry.samples.map(s=>4500+.025*s.distanceFromStart);
+  return [definition.id,addTerrainHeights(geometry,heights,heights,.8)];
+}));
+const fleet = buildFleetTimelines(routes);
+const {equipment}=await import('../server/seed/index.mjs');
+assert.deepEqual(new Set(fleet.map(v=>v.id)),new Set(equipment.map(e=>e.id)));
 const viewer = { entities: new C.EntityCollection(), clock: new C.Clock() };
 configureViewerClock(viewer, fleet[0].timeline);
 const start = viewer.clock.startTime;
 const at = seconds => C.JulianDate.addSeconds(start, seconds, new C.JulianDate());
 const finish = Math.max(...fleet.map(v => v.departureSeconds + v.timeline.totalDurationSeconds));
-assert.deepEqual(fleet.map(v => v.destination), ['P6', 'P5', 'P4']);
-assert.deepEqual(fleet.map(v => v.departureSeconds), [0, 12, 24]);
+assert.deepEqual(fleet.map(v => v.destination), ['P6', 'P5', 'P4','E5','E4','S5']);
+assert.deepEqual(fleet.map(v => v.departureSeconds), [0, 12, 24,6,18,30]);
 for (const v of fleet) {
   v.timeline.startTime = at(v.departureSeconds);
   v.entity = addMineTruck(viewer, v.timeline, v);
   assert.ok(v.entity.isAvailable(at(v.departureSeconds)));
   if (v.departureSeconds) assert.equal(v.entity.isAvailable(at(v.departureSeconds - 0.01)), false);
-  const destinationIndex = TRUCK_ROUTE_WAYPOINTS.findIndex(p => p.id === v.destination);
+  const route=routes[v.routeId??'main'];
+  const destinationIndex = route.waypoints.findIndex(p => p.id === v.destination);
   const expected = route.waypointPositions[destinationIndex];
   for (const seconds of [v.departureSeconds + v.timeline.totalDurationSeconds, finish + 120]) {
     assert.ok(C.Cartesian3.distance(v.entity.position.getValue(at(seconds)), expected) < 0.001);
@@ -60,7 +64,7 @@ for (const benchmark of runOrientationBenchmarks(90)) {
   assert.ok(Math.abs(((forward - benchmark.bearingDegrees + 540) % 360) - 180) < 0.001);
 }
 const assets = [];
-for (const v of fleet.slice(1)) {
+for (const v of fleet.filter(v=>['excavator-01','loader-01'].includes(v.id))) {
   const bytes = fs.readFileSync(new URL('../public' + v.uri, import.meta.url));
   const gltf = await new GLTFLoader().parseAsync(bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength), '');
   gltf.scene.updateMatrixWorld(true);
