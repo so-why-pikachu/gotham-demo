@@ -475,7 +475,7 @@ input {
   overflow: hidden;
   background: rgba(10, 17, 24, 0.96);
   border: 1px solid #496a83;
-  border-radius: var(--radius-md);
+  border-radius: 12px;
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.34);
   backdrop-filter: blur(8px);
 }
@@ -897,6 +897,41 @@ input {
 }
 
 /* ===== Mine Workspace ===== */
+.mine-workspace,
+.archive-workspace {
+  padding: 8px;
+  gap: 8px;
+}
+
+.mine-workspace > .mine-sidebar,
+.mine-workspace > .mine-map,
+.mine-workspace > .mine-inspector,
+.archive-workspace > .archive-sidebar,
+.archive-workspace > .archive-list,
+.archive-workspace > .archive-preview {
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+}
+
+.mine-workspace > .mine-sidebar,
+.mine-workspace > .mine-map,
+.archive-workspace > .archive-sidebar,
+.archive-workspace > .archive-preview {
+  overflow: hidden;
+}
+
+.mine-workspace .object-row,
+.mine-workspace .action-btn,
+.mine-workspace select,
+.mine-workspace .equipment-model-toolbar button,
+.mine-workspace .equipment-part-list button,
+.archive-workspace .category-row,
+.archive-workspace .list-row,
+.archive-workspace .archive-search,
+.archive-workspace .action-btn {
+  border-radius: 6px;
+}
+
 .mine-workspace {
   flex-direction: row;
 }

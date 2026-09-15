@@ -11,3 +11,20 @@ nav.navigate(null);stale.complete();assert.equal(phase,'returning');flights.at(-
 const position=[1,2,4500];nav.focusEquipment(position);const focus=flights.at(-1);position[0]=99;assert.deepEqual(focus.sphere.center,[1,2,4500]);assert.equal(viewer.trackedEntity,undefined);focus.complete();assert.equal(phase,'equipment');const count=flights.length;position[1]=88;assert.equal(flights.length,count);nav.focusEquipment(position);assert.deepEqual(flights.at(-1).sphere.center,[99,88,4500]);nav.navigate(null);flights.at(-2).complete();assert.equal(phase,'returning');
 nav.navigate({id:'antaibao-mine',longitude:112,latitude:39},1200);const pending=flights.at(-1);nav.destroy();pending.complete();assert.equal(phase,'entering');
 console.log('PASS: camera input lock, terrain-relative focus, stale flight cancellation and disposal');
+// Selected vehicles are followed each render; leaving the close-up removes the listener.
+const callbacks = new Set();
+viewer.scene.preRender = {addEventListener(fn){callbacks.add(fn);return ()=>callbacks.delete(fn);}};
+globalThis.Cesium.Matrix4 = {IDENTITY:{}};
+let cameraTarget;
+viewer.camera.lookAt = target => {cameraTarget=[...target];};
+viewer.camera.lookAtTransform = () => {};
+const tracking = createSceneNavigation(viewer, p=>phase=p);
+let movingPosition=[10,20,30];
+tracking.focusEquipment(movingPosition,'XDE240',()=>movingPosition);
+flights.at(-1).complete();assert.equal(callbacks.size,1);
+movingPosition=[40,50,60];callbacks.forEach(fn=>fn());assert.deepEqual(cameraTarget,movingPosition);
+tracking.focusEquipment(movingPosition,'XE215C',()=>movingPosition);assert.equal(callbacks.size,0);
+flights.at(-1).complete();assert.equal(callbacks.size,1);
+tracking.navigate(null);assert.equal(callbacks.size,0);
+tracking.focusEquipment(movingPosition,'XDE240',()=>movingPosition);flights.at(-1).complete();tracking.destroy();assert.equal(callbacks.size,0);
+console.log('PASS: continuous vehicle follow, switch, return and disposal');

@@ -2,10 +2,16 @@ import { getChinaView } from './locations.js';
 export function createSceneNavigation(viewer, onPhase) {
   const C = globalThis.Cesium;
   let sequence = 0;
+  let removeFollow;
+  function stopFollowing() {
+    removeFollow?.(); removeFollow = undefined;
+    if (viewer.camera.lookAtTransform) viewer.camera.lookAtTransform(C.Matrix4.IDENTITY);
+  }
   for (const field of ['enableRotate','enableTranslate','enableZoom','enableTilt','enableLook']) viewer.scene.screenSpaceCameraController[field] = false;
   viewer.screenSpaceEventHandler.removeInputAction(C.ScreenSpaceEventType.LEFT_DOUBLE_CLICK);
   function navigate(mine, terrainHeight = 0, instant = false) {
     const token = ++sequence;
+    stopFollowing();
     viewer.camera.cancelFlight(); viewer.trackedEntity = undefined;
     onPhase(mine ? 'entering' : 'returning');
     const complete = () => { if (token === sequence && !viewer.isDestroyed()) onPhase(mine ? 'mine' : 'national'); };
@@ -23,18 +29,27 @@ export function createSceneNavigation(viewer, onPhase) {
       viewer.camera.flyToBoundingSphere(new C.BoundingSphere(center,radius), {offset:new C.HeadingPitchRange(0,C.Math.toRadians(-72),range),duration,complete});
     }
   }
-  function focusEquipment(position, model = 'XDE240') {
-    // Copy the position at click time; never bind the camera to an animated entity.
+  function focusEquipment(position, model = 'XDE240', getPosition) {
+    stopFollowing();
     const center = C.Cartesian3.clone(position);
     const token = ++sequence;
     viewer.camera.cancelFlight();
     viewer.trackedEntity = undefined;
     onPhase('focusing');
+    const offset = new C.HeadingPitchRange(0, C.Math.toRadians(-43), (model.startsWith('XDE') ? 145 : 110) * Math.max(1, 1.6 / (viewer.scene.canvas.clientWidth / (viewer.scene.canvas.clientHeight || 900))));
     viewer.camera.flyToBoundingSphere(new C.BoundingSphere(center, 15), {
-      offset: new C.HeadingPitchRange(0, C.Math.toRadians(-43), (model.startsWith('XDE') ? 145 : 110) * Math.max(1, 1.6 / (viewer.scene.canvas.clientWidth / (viewer.scene.canvas.clientHeight || 900)))),
+      offset,
       duration: globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches ? 0 : 1.2,
-      complete: () => { if (token === sequence && !viewer.isDestroyed()) onPhase('equipment'); },
+      complete: () => {
+        if (token !== sequence || viewer.isDestroyed()) return;
+        if (getPosition) {
+          const follow = () => { const target = getPosition(); if (target) viewer.camera.lookAt(target, offset); };
+          follow();
+          removeFollow = viewer.scene.preRender.addEventListener(follow);
+        }
+        onPhase('equipment');
+      },
     });
   }
-  return {navigate, focusEquipment, destroy(){++sequence;viewer.camera.cancelFlight();}};
+  return {navigate, focusEquipment, destroy(){++sequence;stopFollowing();viewer.camera.cancelFlight();}};
 }

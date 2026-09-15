@@ -20,7 +20,9 @@ export default function StartupSequence({ onComplete }: { onComplete: () => void
       if (cancelled) return;
       // Original opening begins at footage 6.76s, after the black publisher card.
       const elapsed = (now - started) / 1000;
-      const openingTime = elapsed + 1.76;
+      const accessTime = elapsed + 1.76;
+      // Access begins at app time 1.80; after 1.5s jump to the logo at 4.12.
+      const openingTime = accessTime >= 3.30 ? accessTime + .82 : accessTime;
       // Keep processing visible for 2s (app time 6.24–8.24), then enter the scan.
       const time = reduced ? 20.5 : openingTime >= 8.24 ? openingTime + 6.24 : openingTime;
       sequence.update(time);

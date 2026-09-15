@@ -61,7 +61,7 @@ export default function CesiumViewer(props:Props) {
         pendingFocus=false;
         const vehicle=route.fleet.find((v:any)=>v.id===current.current.equipmentId);
         const position=vehicle?.entity.position.getValue(viewer.clock.currentTime);
-        if(position){navigation!.focusEquipment(position,vehicle.name);parked?.sync();select();}
+        if(position){navigation!.focusEquipment(position,vehicle.name,()=>vehicle.entity.position.getValue(viewer.clock.currentTime));parked?.sync();select();}
       };
       const navigate=(preserveFocus=false)=>{
         if(!preserveFocus)pendingFocus=false;parked?.clear();effects?.clear();
@@ -69,7 +69,7 @@ export default function CesiumViewer(props:Props) {
         if(mine?.id==='yulong-mine' && !route) {activePhase='entering';setPhase('entering');viewer.camera.cancelFlight();visible();return;}
         navigation!.navigate(mine, mine?.id==='yulong-mine'?height:viewer.scene.globe.getHeight(C.Cartographic.fromDegrees(mine?.longitude??0,mine?.latitude??0))??0);
       };
-      const select=()=>{pins.forEach(pin=>{const selected=pin.properties.equipmentId.getValue()===current.current.equipmentId;pin.point.outlineWidth=current.current.equipmentId?0:2;pin.point.color= current.current.equipmentId?C.Color.TRANSPARENT:C.Color.fromCssColorString('#183247').withAlpha(.65);pin.label.show=selected;pin.label.showBackground=!!current.current.equipmentId;pin.label.backgroundColor=C.Color.fromCssColorString('#153328').withAlpha(.85);});};
+      const select=()=>{route?.visualization.setSelected(current.current.equipmentId);pins.forEach(pin=>{const selected=pin.properties.equipmentId.getValue()===current.current.equipmentId;pin.point.outlineWidth=current.current.equipmentId?0:2;pin.point.color= current.current.equipmentId?C.Color.TRANSPARENT:C.Color.fromCssColorString('#183247').withAlpha(.65);pin.label.show=selected;pin.label.showBackground=!!current.current.equipmentId;pin.label.backgroundColor=C.Color.fromCssColorString('#153328').withAlpha(.85);});};
       viewer.scene.canvas.addEventListener('pointerleave',select);
       controls.current={navigate,select,focus};
       click=new C.ScreenSpaceEventHandler(viewer.scene.canvas);

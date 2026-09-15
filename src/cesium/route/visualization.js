@@ -10,8 +10,8 @@ export function addRouteVisualization(viewer, route, showDebugMarkers = false, r
       name: routeName,
       polyline: {
         positions: routePositions,
-        width: 3,
-        material: Cesium.Color.CYAN,
+        width: 7,
+        material: new Cesium.PolylineDashMaterialProperty({color:Cesium.Color.fromCssColorString('#b8f584').withAlpha(.9),gapColor:Cesium.Color.TRANSPARENT,dashLength:24,dashPattern:255}),
         clampToGround: false,
       },
       show: true,

@@ -6,6 +6,7 @@ import {
 import {
   configureViewerClock,
   buildDriveTurnTimeline,
+  getTimelineState,
 } from './timeline.js';
 import { sampleRouteTerrain } from './terrain.js';
 import {
@@ -85,7 +86,40 @@ export async function initializeTruckRoute(viewer, onStatus = () => {}) {
 
   const routeVisuals = MINE_ROUTES.map(definition => addRouteVisualization(
     viewer, routes[definition.id], SHOW_ROUTE_DEBUG_MARKERS, definition.id, definition.name));
-  const visualization = {setShow(show) {routeVisuals.forEach(v => v.setShow(show));}};
+  const C = globalThis.Cesium;
+  let visible = true, selected;
+  const destination = viewer.entities.add({id:'guidance-destination',show:false,
+    point:{pixelSize:10,color:C.Color.WHITE,outlineColor:C.Color.fromCssColorString('#203820'),outlineWidth:3,disableDepthTestDistance:Infinity}});
+  function updateGuidance() {
+    routeVisuals.forEach((v,i)=>{
+      const routeId=MINE_ROUTES[i].id;
+      v.setShow(visible && (!selected || (selected.routeId??'main')===routeId));
+      if (selected && (selected.routeId??'main')===routeId) {
+        const vehicle = selected;
+        v.entities[0].polyline.positions = new C.CallbackProperty(time => {
+          const clockTime = time ?? viewer.clock.currentTime;
+          const elapsed = C.JulianDate.secondsDifference(clockTime, vehicle.timeline.startTime);
+          if (elapsed >= vehicle.timeline.totalDurationSeconds) return [];
+          const position = vehicle.entity?.position.getValue(clockTime);
+          if (!position) return [];
+          const distance = getTimelineState(vehicle.timeline, elapsed).distanceMeters;
+          const remaining = vehicle.timeline.route.samples
+            .filter(sample => sample.distanceFromStart > distance)
+            .map(sample => sample.position);
+          // Exact live position avoids revealing the previous sample behind the vehicle.
+          return remaining.length ? [C.Cartesian3.clone(position), ...remaining] : [];
+        }, false);
+      } else {
+        v.entities[0].polyline.positions = routes[routeId].samples.map(s=>s.position);
+      }
+    });
+    destination.show=visible && !!selected;
+    if(selected) destination.position=selected.timeline.route.waypointPositions.at(-1);
+  }
+  const visualization = {
+    setShow(show) {visible=show;updateGuidance();},
+    setSelected(id) {const next=fleet.find(v=>v.id===id);if(next===selected)return;selected=next;updateGuidance();},
+  };
   for (const vehicle of fleet) vehicle.entity = addMineTruck(viewer, vehicle.timeline, vehicle);
   const truckEntity = fleet[0].entity;
   globalThis.__TRUCK_ROUTE_DEBUG__.truckEntity = truckEntity;

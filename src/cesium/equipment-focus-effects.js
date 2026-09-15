@@ -18,7 +18,7 @@ export function createEquipmentFocusEffects(viewer) {
     }
     viewer.entities.values.filter(e=>e.id.endsWith('-route')&&e.polyline).forEach(e=>{
       routes.push([e.polyline,e.polyline.material,e.polyline.width]);
-      e.polyline.material=C.Color.fromCssColorString(e.id===`${routeId}-route`?'#9dc2b6':'#738080').withAlpha(.35);e.polyline.width=1;
+      e.polyline.material=new C.PolylineDashMaterialProperty({color:C.Color.fromCssColorString(e.id===`${routeId}-route`?'#9dc2b6':'#738080').withAlpha(.35),gapColor:C.Color.TRANSPARENT,dashLength:24,dashPattern:255});e.polyline.width=4;
     });
     const radius=model.startsWith('XDE')?27:20;
     const matrix=C.Transforms.eastNorthUpToFixedFrame(position);

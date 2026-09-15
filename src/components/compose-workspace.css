@@ -5,12 +5,17 @@
 .compose-workspace label{font-size:12px}.compose-header>label{display:grid;gap:10px;color:#8397a9}
 .compose-workspace select{background:#14222e;border:1px solid #344e64;color:#d2e0ee;padding:7px;font:inherit;max-width:100%}
 .compose-body{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:26px;flex:1;min-height:680px}
-.compose-flow{display:flex;flex-direction:column;border:1px solid #263b4d;background:radial-gradient(circle,#26405755 1px,transparent 1px) 0 0/22px 22px}
+.compose-flow{display:flex;flex-direction:column;border:1px solid #263b4d;background:#0c141d}
 .compose-flow-caption,.compose-flow-footer{padding:16px 22px;font-size:10px;letter-spacing:1px;color:#6d8ba4;background:#0e1923;border-bottom:1px solid #263b4d}
 .compose-flow-caption{display:flex;justify-content:space-between}.compose-flow-footer{border-top:1px solid #263b4d;border-bottom:0;letter-spacing:.4px}
 .compose-graph-scroll{overflow:auto;flex:1;padding:20px}.compose-graph{position:relative;min-width:700px;height:600px}.compose-links{position:absolute;width:100%;height:100%;pointer-events:none}
 .compose-node{position:absolute;left:0;width:33.333%;height:80px;display:flex;align-items:center;gap:16px;text-align:left;background:#111e2a;border:1px solid #344859;color:#a8bacb;padding:14px 16px;cursor:pointer;transition:border-color .18s,box-shadow .18s,background .18s}
 .compose-node.selected{border-color:#50a7ff;box-shadow:0 0 0 1px #459aff33,0 0 22px #318ae518;background:#142b40;color:#e2effc}
+.compose-neon-border{position:absolute;inset:-1px;width:calc(100% + 2px);height:calc(100% + 2px);overflow:visible;pointer-events:none;filter:drop-shadow(0 0 3px #71d9ff) drop-shadow(0 0 7px #42baff88)}
+.compose-node{border-radius:9px}
+.compose-output{border-radius:12px}
+.compose-flow{border-radius:12px;overflow:hidden}
+.compose-workspace select,.compose-generate{border-radius:6px}
 .compose-node:hover{border-color:#78a4ca}.compose-node:focus-visible,.compose-workspace button:focus-visible{outline:2px solid #b1d6ff;outline-offset:3px}
 .compose-node-number{color:#6283a0;font-size:12px}.compose-node small,.compose-node strong,.compose-node em{display:block}.compose-node small{font-size:8px;letter-spacing:1px;color:#7799b7}.compose-node strong{font-weight:500;font-size:15px;margin:4px 0}.compose-node em{font-size:10px;font-style:normal;color:#859eb4}
 .compose-node-port{position:absolute;right:-4px;top:35px;width:7px;height:7px;border:1px solid #59748c;background:#132534}.compose-node.selected .compose-node-port{background:#54aaff;border-color:#9dd0ff}

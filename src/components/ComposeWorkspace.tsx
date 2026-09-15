@@ -4,6 +4,7 @@ import type { Report } from '../../shared/contracts';
 import { useBusiness } from '../store/BusinessProvider';
 import { Compose, FileText } from './Icons';
 import './compose-workspace.css';
+import ComposeNeonBorder from './ComposeNeonBorder';
 
 const groups = [
   { name: '诊断报告', en: 'DIAGNOSIS', categories: [] },
@@ -70,6 +71,7 @@ function Composition({ equipmentId, manager, params }: { equipmentId: string; ma
         {groups.map((_, i) => isSelected(i) && <path key={i} d={`M300 ${50 + i * 100} C470 ${50 + i * 100}, 480 300, 620 300`} fill="none" stroke="#4ca5ff" strokeWidth="1.6" vectorEffect="non-scaling-stroke" markerEnd={`url(#${arrowId})`} />)}
       </svg>
       {groups.map((group, index) => { const selected = isSelected(index); const count = index === 0 ? diagnoses.length : groupDocs(index).length; return <button key={group.en} aria-pressed={selected} className={`compose-node ${selected ? 'selected' : ''}`} style={{ top: `${(index * 100 + 10) / 6}%` }} onClick={() => toggleGroup(index)} disabled={busy}>
+        {selected && <ComposeNeonBorder />}
         <span className="compose-node-number">0{index + 1}</span><span><small>{group.en}</small><strong>{group.name}</strong><em>{count ? `${index === 0 ? (selected ? 1 : 0) : groupDocs(index).filter(d => documentIds.includes(d.id)).length} / ${count} 份已输入` : '暂无资料 · 待补充'}</em></span><span className="compose-node-port" />
       </button>; })}
       <div className="compose-output"><span className="compose-eyebrow"><FileText /> BUSINESS REPORT</span><h2>商业报告</h2><p>需求方案 / DEMAND PROPOSAL</p><div className="compose-input-count"><strong>{selectedDocs.length + Number(!!source && diagnosisEnabled)}</strong> 份输入依据</div>
